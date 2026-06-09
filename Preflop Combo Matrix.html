@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compact Combo Matrix</title>
+    <style>
+        :root {
+            --raise-color: rgb(231, 153, 123);
+            --call-color: rgb(143, 191, 139);
+            --fold-color: rgb(111, 161, 193);
+            --clear-color: rgb(102, 102, 102);
+            --allin-color: rgb(251, 73, 43);
+            --bg-color: #f0f0f0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 10px;
+            user-select: none;
+        }
+
+        .palette-panel {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 4px;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 950px;
+        }
+
+        .palette-btn {
+            height: 30px;
+            border: 1px solid #333;
+            cursor: pointer;
+            font-size: 11px;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            background: white;
+        }
+
+        .palette-btn.active {
+            outline: 3px solid #007bff;
+            z-index: 10;
+        }
+
+        .main-container {
+            display: flex;
+            gap: 15px;
+            max-width: 950px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .matrix-panel {
+            display: grid;
+            grid-template-columns: repeat(13, 1fr);
+            gap: 1px;
+            background: #444;
+            border: 2px solid #222;
+        }
+
+        .matrix-cell {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #000;
+        }
+
+        .detail-panel {
+            width: 300px;
+            background: #fff;
+            border: 1px solid #999;
+            padding: 12px;
+            height: 585px;
+            overflow-y: auto;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .bulk-section {
+            background: #f9f9f9;
+            padding: 8px;
+            border: 1px solid #ddd;
+            margin-bottom: 12px;
+            border-radius: 4px;
+        }
+
+        .bulk-title {
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .combo-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            font-size: 13px;
+        }
+
+        .combo-actions {
+            display: flex;
+            gap: 3px;
+        }
+
+        .action-dot {
+            width: 18px;
+            height: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .action-dot.active {
+            outline: 2px solid #000;
+            outline-offset: 1px;
+        }
+
+        .suit-s {
+            color: #000;
+        }
+
+        .suit-c {
+            color: #1a7a1a;
+        }
+
+        .suit-h {
+            color: #d10000;
+        }
+
+        .suit-d {
+            color: #0051ff;
+        }
+
+        .bottom-panel {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            width: 100%;
+            max-width: 950px;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .stat-box {
+            padding: 10px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            border: 2px solid #333;
+            cursor: pointer;
+            color: black;
+        }
+
+        .tooltip {
+            position: fixed;
+            top: 10px;
+            background: #333;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="tooltip" id="toast">Copied!</div>
+
+    <div class="palette-panel" id="palettePanel"></div>
+
+    <div class="main-container">
+        <div class="matrix-panel" id="matrixPanel"></div>
+        <div class="detail-panel">
+            <h3 id="detailTitle" style="margin:0 0 8px 0; font-size: 16px;">Details</h3>
+            <div id="bulkContainer" class="bulk-section"></div>
+            <div id="comboContainer"></div>
+        </div>
+    </div>
+
+    <div class="bottom-panel">
+        <div class="stat-box" id="raiseStat" onclick="copyAction(COLORS.RAISE, 'Raise')"></div>
+        <div class="stat-box" id="callStat" onclick="copyAction(COLORS.CALL, 'Call')"></div>
+        <div class="stat-box" id="foldStat" onclick="copyAction(COLORS.FOLD, 'Fold')"></div>
+        <div class="stat-box" id="allinStat" onclick="copyAction(COLORS.ALLIN, 'All-In')"></div>
+    </div>
+
+    <script>
+        const cards = "AKQJT98765432";
+        const suits = ['s', 'c', 'h', 'd'];
+        const COLORS = {
+            RAISE: "rgb(231, 153, 123)", CALL: "rgb(143, 191, 139)",
+            FOLD: "rgb(111, 161, 193)", CLEAR: "rgb(102, 102, 102)",
+            ALLIN: "rgb(251, 73, 43)"
+        };
+
+        const PALETTES = [
+            { n: "Raise", c: [COLORS.RAISE] },
+            { n: "Call", c: [COLORS.CALL] },
+            { n: "Fold", c: [COLORS.FOLD] },
+            { n: "Clear", c: [COLORS.CLEAR] },
+            { n: "50R/50C", c: [COLORS.RAISE, COLORS.CALL] },
+            { n: "50R/50F", c: [COLORS.RAISE, COLORS.FOLD] },
+            { n: "50C/50F", c: [COLORS.CALL, COLORS.FOLD] },
+            { n: "25R/Clear", c: [COLORS.RAISE, COLORS.CLEAR, COLORS.CLEAR, COLORS.CLEAR] }
+        ];
+
+        let gridState = [];
+        let currentBrush = PALETTES[0].c;
+        let isDragging = false;
+        let selectedCell = null;
+
+        function init() {
+            createPalette();
+            createMatrix();
+            updateStats();
+            window.addEventListener('mouseup', () => isDragging = false);
+        }
+
+        function createPalette() {
+            const container = document.getElementById('palettePanel');
+            PALETTES.forEach((p, i) => {
+                const btn = document.createElement('div');
+                btn.className = 'palette-btn' + (i === 0 ? ' active' : '');
+                btn.innerText = p.n;
+                btn.style.background = p.c.length === 1
+                    ? p.c[0]
+                    : `linear-gradient(to right, ${p.c[0]} 50%, ${p.c[1]} 50%)`;
+                btn.onclick = () => {
+                    currentBrush = p.c;
+                    document.querySelectorAll('.palette-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function createMatrix() {
+            const container = document.getElementById('matrixPanel');
+            for (let r = 0; r < 13; r++) {
+                for (let c = 0; c < 13; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'matrix-cell';
+                    const label = (r < c) ? cards[r] + cards[c] + 's' : (r > c ? cards[c] + cards[r] + 'o' : cards[r] + cards[r]);
+                    cell.innerText = label;
+                    const state = { label, handMap: generateHandMap(r, c), dom: cell };
+                    cell.onmousedown = () => { isDragging = true; paintCell(state); selectCell(state); };
+                    cell.onmouseenter = () => { if (isDragging) paintCell(state); };
+                    updateCellVisual(state);
+                    container.appendChild(cell);
+                    gridState.push(state);
+                }
+            }
+        }
+
+        function generateHandMap(r, c) {
+            const map = {};
+            const r1 = cards[r], r2 = cards[c];
+            if (r === c) {
+                for (let i = 0; i < 4; i++) for (let j = i + 1; j < 4; j++) map[`${r1}${suits[i]}${r2}${suits[j]}`] = COLORS.CLEAR;
+            } else if (c > r) {
+                suits.forEach(s => map[`${r1}${s}${r2}${s}`] = COLORS.CLEAR);
+            } else {
+                suits.forEach(s1 => suits.forEach(s2 => { if (s1 !== s2) map[`${r2}${s1}${r1}${s2}`] = COLORS.CLEAR; }));
+            }
+            return map;
+        }
+
+        function paintCell(state) {
+            const keys = Object.keys(state.handMap);
+            keys.forEach((k, i) => {
+                state.handMap[k] = currentBrush[Math.floor((i / keys.length) * currentBrush.length)];
+            });
+            updateCellVisual(state);
+            updateStats();
+            if (selectedCell === state) selectCell(state);
+        }
+
+        function updateCellVisual(state) {
+            const vals = Object.values(state.handMap);
+            let stops = vals.map((c, i) => `${c} ${(i / vals.length) * 100}% ${((i + 1) / vals.length) * 100}%`);
+            state.dom.style.background = `linear-gradient(to right, ${stops.join(',')})`;
+        }
+
+        function formatSuit(hand) {
+            const symbol = { s: '♠', c: '♣', h: '♥', d: '♦' };
+            return hand.replace(/([schd])/g, (m) => `<span class="suit-${m}">${symbol[m]}</span>`);
+        }
+
+        function selectCell(state) {
+            selectedCell = state;
+            document.getElementById('detailTitle').innerText = state.label;
+            const bulk = document.getElementById('bulkContainer');
+            bulk.innerHTML = '<div class="bulk-title">Bulk Apply</div>';
+            const bulkActions = document.createElement('div');
+            bulkActions.className = 'combo-actions';
+            [COLORS.RAISE, COLORS.CALL, COLORS.FOLD, COLORS.ALLIN, COLORS.CLEAR].forEach(color => {
+                const btn = document.createElement('div');
+                btn.className = 'action-dot';
+                btn.style.backgroundColor = color;
+                btn.onclick = () => {
+                    Object.keys(state.handMap).forEach(k => state.handMap[k] = color);
+                    updateCellVisual(state); updateStats(); selectCell(state);
+                };
+                bulkActions.appendChild(btn);
+            });
+            bulk.appendChild(bulkActions);
+
+            const container = document.getElementById('comboContainer');
+            container.innerHTML = '';
+            Object.entries(state.handMap).forEach(([name, curColor]) => {
+                const row = document.createElement('div');
+                row.className = 'combo-row';
+                row.style.background = curColor;
+                row.style.borderRadius = '4px';
+                row.style.marginBottom = '2px';
+                row.style.color = '#fff';
+                row.style.textShadow = '1px 1px 1px #000';
+                row.innerHTML = `<span style="font-weight:bold; padding-left:5px;">${formatSuit(name)}</span>`;
+                const actionGroup = document.createElement('div');
+                actionGroup.className = 'combo-actions';
+                actionGroup.style.paddingRight = '5px';
+                [COLORS.RAISE, COLORS.CALL, COLORS.FOLD, COLORS.ALLIN, COLORS.CLEAR].forEach(color => {
+                    const dot = document.createElement('div');
+                    dot.className = `action-dot ${curColor === color ? 'active' : ''}`;
+                    dot.style.backgroundColor = color;
+                    dot.onclick = () => {
+                        state.handMap[name] = color;
+                        updateCellVisual(state); updateStats(); selectCell(state);
+                    };
+                    actionGroup.appendChild(dot);
+                });
+                row.appendChild(actionGroup);
+                container.appendChild(row);
+            });
+        }
+
+        function updateStats() {
+            const counts = { [COLORS.RAISE]: 0, [COLORS.CALL]: 0, [COLORS.FOLD]: 0, [COLORS.ALLIN]: 0 };
+            gridState.forEach(s => Object.values(s.handMap).forEach(v => { if (counts[v] !== undefined) counts[v]++; }));
+            const set = (id, color, name) => {
+                const el = document.getElementById(id);
+                el.style.backgroundColor = color;
+                el.innerText = `${name}: ${((counts[color] / 1326) * 100).toFixed(1)}%` + '(' + counts[color].toFixed(1) + ')';
+            };
+            set('raiseStat', COLORS.RAISE, 'Raise');
+            set('callStat', COLORS.CALL, 'Call');
+            set('foldStat', COLORS.FOLD, 'Fold');
+            set('allinStat', COLORS.ALLIN, 'All-In');
+        }
+
+        function copyAction(color, name) {
+            let combos = [];
+            gridState.forEach(s => Object.entries(s.handMap).forEach(([k, v]) => { if (v === color) combos.push(k); }));
+            navigator.clipboard.writeText(combos.join(',') || 'None');
+            const t = document.getElementById('toast');
+            t.innerText = `Copied ${name}`; t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 1000);
+        }
+
+        init();
+    </script>
+</body>
+
+</html>
