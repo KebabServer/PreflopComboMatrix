@@ -13,22 +13,94 @@
             --clear-color: rgb(102, 102, 102);
             --allin-color: rgb(251, 73, 43);
             --bg-color: #f0f0f0;
+            --bg-sidebar: #ffffff;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            align-items: flex-start;
             background-color: var(--bg-color);
             margin: 0;
-            padding: 10px;
+            padding: 0;
             user-select: none;
+            min-height: 100vh;
+        }
+
+        /* --- Sidebar Styles --- */
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid #ccc;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            box-sizing: border-box;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+            background: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .sidebar-section {
+            padding: 12px 16px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .sidebar-section-title {
+            font-size: 11px;
+            font-weight: bold;
+            color: #777;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .preset-btn {
+            display: block;
+            width: 100%;
+            padding: 8px 10px;
+            margin-bottom: 6px;
+            background: #fdfdfd;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            transition: all 0.15s ease;
+        }
+
+        .preset-btn:hover {
+            background: #eef4ff;
+            border-color: #007bff;
+            color: #007bff;
+        }
+
+        .preset-btn.active {
+            border-color: #007bff;
+            background: #007bff;
+            color: #fff;
+        }
+
+        .main-content {
+            padding: 15px;
+            flex-grow: 1;
         }
 
         .palette-panel {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
+            grid-template-columns: repeat(8, 1fr);
             gap: 4px;
             margin-bottom: 15px;
             width: 100%;
@@ -56,7 +128,6 @@
             gap: 15px;
             max-width: 950px;
             width: 100%;
-            justify-content: center;
         }
 
         .matrix-panel {
@@ -68,12 +139,12 @@
         }
 
         .matrix-cell {
-            width: 50px;
-            height: 50px;
+            width: 48px;
+            height: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             color: #000;
@@ -87,6 +158,7 @@
             height: 585px;
             overflow-y: auto;
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
         }
 
         .bulk-section {
@@ -160,7 +232,7 @@
         .stat-box {
             padding: 10px;
             text-align: center;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             border: 2px solid #333;
             cursor: pointer;
@@ -170,6 +242,7 @@
         .tooltip {
             position: fixed;
             top: 10px;
+            right: 10px;
             background: #333;
             color: white;
             padding: 6px 12px;
@@ -181,45 +254,210 @@
 </head>
 
 <body>
-
-    <div class="tooltip" id="toast">Copied!</div>
-
-    <div class="palette-panel" id="palettePanel"></div>
-
-    <div class="main-container">
-        <div class="matrix-panel" id="matrixPanel"></div>
-        <div class="detail-panel">
-            <h3 id="detailTitle" style="margin:0 0 8px 0; font-size: 16px;">Details</h3>
-            <div id="bulkContainer" class="bulk-section"></div>
-            <div id="comboContainer"></div>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <span>Range Manager</span>
         </div>
+
+        <div class="positions-container" id="sidebarContent"></div>
     </div>
 
-    <div class="bottom-panel">
-        <div class="stat-box" id="raiseStat" onclick="copyAction(COLORS.RAISE, 'Raise')"></div>
-        <div class="stat-box" id="callStat" onclick="copyAction(COLORS.CALL, 'Call')"></div>
-        <div class="stat-box" id="foldStat" onclick="copyAction(COLORS.FOLD, 'Fold')"></div>
-        <div class="stat-box" id="allinStat" onclick="copyAction(COLORS.ALLIN, 'All-In')"></div>
+    <div class="main-content">
+        <div class="tooltip" id="toast">Copied!</div>
+
+        <div class="palette-panel" id="palettePanel"></div>
+
+        <div class="main-container">
+            <div class="matrix-panel" id="matrixPanel"></div>
+            <div class="detail-panel">
+                <h3 id="detailTitle" style="margin:0 0 8px 0; font-size: 16px;">Details</h3>
+                <div id="bulkContainer" class="bulk-section"></div>
+                <div id="comboContainer"></div>
+            </div>
+        </div>
+
+        <div class="bottom-panel">
+            <div class="stat-box" id="raiseStat" onclick="copyAction(COLORS.RAISE, 'Raise')"></div>
+            <div class="stat-box" id="callStat" onclick="copyAction(COLORS.CALL, 'Call')"></div>
+            <div class="stat-box" id="foldStat" onclick="copyAction(COLORS.FOLD, 'Fold')"></div>
+            <div class="stat-box" id="allinStat" onclick="copyAction(COLORS.ALLIN, 'All-In')"></div>
+        </div>
+
+        <div style="margin-top: 15px; font-size: 14px; font-weight: bold;">
+            <label style="cursor: pointer; user-select: none;">
+                <input type="checkbox" id="hideFoldCheckbox" onchange="updateAllVisuals()"> Hide Fold Range
+            </label>
+        </div>
     </div>
 
     <script>
         const cards = "AKQJT98765432";
         const suits = ['s', 'c', 'h', 'd'];
         const COLORS = {
-            RAISE: "rgb(231, 153, 123)", CALL: "rgb(143, 191, 139)",
-            FOLD: "rgb(111, 161, 193)", CLEAR: "rgb(102, 102, 102)",
+            RAISE: "rgb(231, 153, 123)",
+            CALL: "rgb(143, 191, 139)",
+            FOLD: "rgb(111, 161, 193)",
+            CLEAR: "rgb(102, 102, 102)",
             ALLIN: "rgb(251, 73, 43)"
         };
 
         const PALETTES = [
-            { n: "Raise", c: [COLORS.RAISE] },
-            { n: "Call", c: [COLORS.CALL] },
-            { n: "Fold", c: [COLORS.FOLD] },
-            { n: "Clear", c: [COLORS.CLEAR] },
-            { n: "50R/50C", c: [COLORS.RAISE, COLORS.CALL] },
-            { n: "50R/50F", c: [COLORS.RAISE, COLORS.FOLD] },
-            { n: "50C/50F", c: [COLORS.CALL, COLORS.FOLD] },
-            { n: "25R/Clear", c: [COLORS.RAISE, COLORS.CLEAR, COLORS.CLEAR, COLORS.CLEAR] }
+            {n: "Raise", c: [COLORS.RAISE]},
+            {n: "Call", c: [COLORS.CALL]},
+            {n: "Fold", c: [COLORS.FOLD]},
+            {n: "Clear", c: [COLORS.CLEAR]},
+            {n: "50R/50C", c: [COLORS.RAISE, COLORS.CALL]},
+            {n: "50R/50F", c: [COLORS.RAISE, COLORS.FOLD]},
+            {n: "50C/50F", c: [COLORS.CALL, COLORS.FOLD]},
+            {n: "25R/Clear", c: [COLORS.RAISE, COLORS.CLEAR, COLORS.CLEAR, COLORS.CLEAR]}
+        ];
+        // Supported formats
+        // 1. Pasted string directly from clipboard
+        // [COLORS.RAISE]: "AsKs,AcKc,AhKh,2s2c,AA,KK"
+
+        // 2. Pasted string inside an array
+        // [COLORS.RAISE]: ["AsKs,AcKc,AhKh,2s2c", "QQ", "JJ"]
+
+        // 3. Array of individual items
+        // [COLORS.RAISE]: ["AsKs", "AcKc", "AA", "AKs"]
+        const PRESETS = [
+            {
+                name: "UTG Open",
+                category: "UTG",
+                actions: {
+                    [COLORS.RAISE]: [
+                        "AsAc,AsAh,AsAd,AcAh,AcAd,AhAd,AsKs,AcKc,AhKh,AdKd,AsQs,AcQc,AhQh,AdQd,AsJs,AcJc,AhJh,AdJd,AsTs,AcTc,AhTh,AdTd,As9s,Ac9c,Ah9h,Ad9d,As8s,Ac8c,Ah8h,Ad8d,As7s,Ac7c,Ah7h,Ad7d,As6s,Ac6c,Ah6h,Ad6d,As5s,Ac5c,Ah5h,Ad5d,As4s,Ac4c,Ah4h,Ad4d,As3s,Ac3c,Ah3h,Ad3d,As2s,Ac2c,Ah2h,Ad2d,AsKc,AsKh,AsKd,AcKs,AcKh,AcKd,AhKs,AhKc,AhKd,AdKs,AdKc,AdKh,KsKc,KsKh,KsKd,KcKh,KcKd,KhKd,KsQs,KcQc,KhQh,KdQd,KsJs,KcJc,KhJh,KdJd,KsTs,KcTc,KhTh,KdTd,Ks9s,Kc9c,Kh9h,Kd9d,Ks8s,Kc8c,Kh8h,Kd8d,Ks7s,Kc7c,Ks6s,Kc6c,Ks5s,Kc5c,AsQc,AsQh,AsQd,AcQs,AcQh,AcQd,AhQs,AhQc,AhQd,AdQs,AdQc,AdQh,KsQc,KsQh,KsQd,KcQs,KcQh,KcQd,KhQs,KhQc,KhQd,KdQs,KdQc,KdQh,QsQc,QsQh,QsQd,QcQh,QcQd,QhQd,QsJs,QcJc,QhJh,QdJd,QsTs,QcTc,QhTh,QdTd,Qs9s,Qc9c,Qh9h,Qd9d,AsJc,AsJh,AsJd,AcJs,AcJh,AcJd,AhJs,AhJc,AhJd,AdJs,AdJc,AdJh,KsJc,KsJh,KsJd,KcJs,KcJh,KcJd,JsJc,JsJh,JsJd,JcJh,JcJd,JhJd,JsTs,JcTc,JhTh,JdTd,Js9s,Jc9c,Jh9h,Jd9d,AsTc,AsTh,AsTd,AcTs,AcTh,AcTd,TsTc,TsTh,TsTd,TcTh,TcTd,ThTd,Ts9s,Tc9c,Th9h,Td9d,Ts8s,Tc8c,Th8h,Td8d,9s9c,9s9h,9s9d,9c9h,9c9d,9h9d,9s8s,9c8c,8s8c,8s8h,8s8d,8c8h,8c8d,8h8d,8s7s,8c7c,7s7c,7s7h,7s7d,7c7h,7c7d,7h7d,7s6s,7c6c,6s6c,6s6h,6s6d,6c6h,6c6d,6h6d,6s5s,6c5c,5s5c,5s5h,5s5d,5c5h,5c5d,5h5d,5s4s,5c4c,4s4c,4s4h,4s4d"
+                    ],
+                    [COLORS.FOLD]: [
+                        "Kh7h,Kd7d,Kh6h,Kd6d,Kh5h,Kd5d,Qs8s,Qc8c,Qh8h,Qd8d,KhJs,KhJc,KhJd,KdJs,KdJc,KdJh,Js8s,Jc8c,Jh8h,Jd8d,AhTs,AhTc,AhTd,AdTs,AdTc,AdTh,9h8h,9d8d,8h7h,8d7d,7h6h,7d6d,6h5h,6d5d,5h4h,5d4d,4c4h,4c4d,4h4d,3s3c,3s3h,3s3d,3c3h,3c3d,3h3d,2s2c,2s2h,2s2d,2c2h,2c2d,2h2d"
+                    ]
+                }
+            },
+            {
+                name: "UTG vs IP",
+                category: "UTG",
+                actions: {
+                    [COLORS.ALLIN]:[
+                        "AsKc,AsKh,AsKd,AcKs,AcKh,AcKd,KsKc,KsKh,KsKd"
+                    ],
+                    [COLORS.RAISE]: [
+                        "AsAc,AsAh,AsAd,AcAh,AcAd,AhAd,AsKs,AcKc,AhKh,AdKd,AsJs,AcJc,AsTs,As5s,Ac5c,Ah5h,As4s,AhKs,AhKc,AhKd,KcKh,KcKd,KhKd,KsQs,KsJs,KcJc,KsTs,AsQc,AsQh,AsQd,QsQc,QsQh,QsQd,JsJc,JsJh,JsTs,TsTc"
+                    ],
+                    [COLORS.CALL]: [
+                        "AsQs,AcQc,AhQh,AdQd,AhJh,AdJd,AcTc,AhTh,AdTd,Ad5d,Ac4c,AdKs,AdKc,AdKh,KcQc,KhQh,KdQd,KhJh,KdJd,KcTc,QcQh,QcQd,QhQd,QsJs,QcJc,JsJd,JcJh,JcJd,JhJd,JcTc,JhTh,JdTd,TsTh,TsTd,TcTh,TcTd,ThTd,Ts9s,9s9c,9s9h,9s9d,9c9h,8s8c,8s8h,8s8d,7s7c,7s7h,7s7d,7s6s,7c6c,6s6c,6s6h,6s6d,6s5s,6c5c,5s5c,5s5h,5s5d,5s4s,5c4c,4s4c,4s4h,4s4d"
+                    ],
+                    [COLORS.FOLD]: [
+                        "As9s,Ac9c,Ah9h,Ad9d,As8s,Ac8c,Ah8h,Ad8d,As7s,Ac7c,Ah7h,Ad7d,As6s,Ac6c,Ah6h,Ad6d,Ah4h,Ad4d,As3s,Ac3c,Ah3h,Ad3d,As2s,Ac2c,Ah2h,Ad2d,KhTh,KdTd,Ks9s,Kc9c,Kh9h,Kd9d,Ks8s,Kc8c,Kh8h,Kd8d,Ks7s,Kc7c,Kh7h,Kd7d,AcQs,AcQh,AcQd,AhQs,AhQc,AhQd,AdQs,AdQc,AdQh,KsQc,KsQh,KsQd,KcQs,KcQh,KcQd,KhQs,KhQc,KhQd,KdQs,KdQc,KdQh,QhJh,QdJd,QsTs,QcTc,QhTh,QdTd,Qs9s,Qc9c,Qh9h,Qd9d,AsJc,AsJh,AsJd,AcJs,AcJh,AcJd,AhJs,AhJc,AhJd,AdJs,AdJc,AdJh,Js9s,Jc9c,Jh9h,Jd9d,Tc9c,Th9h,Td9d,Ts8s,Tc8c,Th8h,Td8d,9c9d,9h9d,8c8h,8c8d,8h8d,7c7h,7c7d,7h7d,6c6h,6c6d,6h6d,5c5h,5c5d,5h5d"
+                    ]
+
+                }
+            },
+            {
+                name: "UTG vs OOP",
+                category: "UTG",
+                actions: {
+                    [COLORS.RAISE]: [
+                        
+                    ],
+                    [COLORS.CALL]: [
+                        
+                    ],
+                    [COLORS.FOLD]: [
+                        
+                    ]
+
+                }
+            },
+            {
+                name: "CO Open (27%)",
+                category: "6-Max RFI",
+                actions: {
+                    [COLORS.RAISE]: [
+                        "AA", "KK", "QQ", "JJ", "TT", "99", "88", "77", "66", "55", "44",
+                        "AKs", "AQs", "AJs", "ATs", "A9s", "A8s", "A7s", "A6s", "A5s", "A4s", "A3s", "A2s",
+                        "KQs", "KJs", "KTs", "K9s", "K8s", "QJs", "QTs", "Q9s", "JTs", "J9s", "T9s", "T8s", "98s", "87s", "76s", "65s",
+                        "AKo", "AQo", "AJo", "ATo", "A9o", "KQo", "KJo", "KTo", "QJo", "QTo", "JTo"
+                    ]
+                }
+            },
+            {
+                name: "BTN Open",
+                category: "BTN",
+                actions: {
+                    [COLORS.RAISE]: [
+                        "AsAc,AsAh,AsAd,AcAh,AcAd,AhAd,AsKs,AcKc,AhKh,AdKd,AsQs,AcQc,AhQh,AdQd,AsJs,AcJc,AhJh,AdJd,AsTs,AcTc,AhTh,AdTd,As9s,Ac9c,Ah9h,Ad9d,As8s,Ac8c,Ah8h,Ad8d,As7s,Ac7c,Ah7h,Ad7d,As6s,Ac6c,Ah6h,Ad6d,As5s,Ac5c,Ah5h,Ad5d,As4s,Ac4c,Ah4h,Ad4d,As3s,Ac3c,Ah3h,Ad3d,As2s,Ac2c,Ah2h,Ad2d,AsKc,AsKh,AsKd,AcKs,AcKh,AcKd,AhKs,AhKc,AhKd,AdKs,AdKc,AdKh,KsKc,KsKh,KsKd,KcKh,KcKd,KhKd,KsQs,KcQc,KhQh,KdQd,KsJs,KcJc,KhJh,KdJd,KsTs,KcTc,KhTh,KdTd,Ks9s,Kc9c,Kh9h,Kd9d,Ks8s,Kc8c,Kh8h,Kd8d,Ks7s,Kc7c,Kh7h,Kd7d,Ks6s,Kc6c,Kh6h,Kd6d,Ks5s,Kc5c,Kh5h,Kd5d,Ks4s,Kc4c,Kh4h,Kd4d,Ks3s,Kc3c,Kh3h,Kd3d,Ks2s,Kc2c,Kh2h,Kd2d,AsQc,AsQh,AsQd,AcQs,AcQh,AcQd,AhQs,AhQc,AhQd,AdQs,AdQc,AdQh,KsQc,KsQh,KsQd,KcQs,KcQh,KcQd,KhQs,KhQc,KhQd,KdQs,KdQc,KdQh,QsQc,QsQh,QsQd,QcQh,QcQd,QhQd,QsJs,QcJc,QhJh,QdJd,QsTs,QcTc,QhTh,QdTd,Qs9s,Qc9c,Qh9h,Qd9d,Qs8s,Qc8c,Qh8h,Qd8d,Qs7s,Qc7c,Qh7h,Qd7d,Qs6s,Qc6c,Qh6h,Qd6d,Qs5s,Qc5c,Qh5h,Qd5d,Qs4s,Qc4c,Qh4h,Qd4d,Qs3s,Qc3c,Qh3h,Qd3d,Qs2s,Qc2c,Qh2h,Qd2d,AsJc,AsJh,AsJd,AcJs,AcJh,AcJd,AhJs,AhJc,AhJd,AdJs,AdJc,AdJh,KsJc,KsJh,KsJd,KcJs,KcJh,KcJd,KhJs,KhJc,KhJd,KdJs,KdJc,KdJh,QsJc,QsJh,QsJd,QcJs,QcJh,QcJd,QhJs,QhJc,QhJd,QdJs,QdJc,QdJh,JsJc,JsJh,JsJd,JcJh,JcJd,JhJd,JsTs,JcTc,JhTh,JdTd,Js9s,Jc9c,Jh9h,Jd9d,Js8s,Jc8c,Jh8h,Jd8d,Js7s,Jc7c,Jh7h,Jd7d,Js6s,Jc6c,Jh6h,Jd6d,Js5s,Jc5c,Jh5h,Jd5d,Js4s,Jc4c,Jh4h,Jd4d,AsTc,AsTh,AsTd,AcTs,AcTh,AcTd,AhTs,AhTc,AhTd,AdTs,AdTc,AdTh,KsTc,KsTh,KsTd,KcTs,KcTh,KcTd,KhTs,KhTc,KhTd,KdTs,KdTc,KdTh,QsTc,QsTh,QsTd,QcTs,QcTh,QcTd,QhTs,QhTc,QhTd,QdTs,QdTc,QdTh,JsTc,JsTh,JsTd,JcTs,JcTh,JcTd,JhTs,JhTc,JhTd,JdTs,JdTc,JdTh,TsTc,TsTh,TsTd,TcTh,TcTd,ThTd,Ts9s,Tc9c,Th9h,Td9d,Ts8s,Tc8c,Th8h,Td8d,Ts7s,Tc7c,Th7h,Td7d,Ts6s,Tc6c,Th6h,Td6d,As9c,As9h,As9d,Ac9s,Ac9h,Ac9d,Ah9s,Ah9c,Ah9d,Ad9s,Ad9c,Ad9h,Ks9c,Ks9h,Ks9d,Kc9s,Kc9h,Kc9d,Kh9s,Kh9c,Kh9d,Kd9s,Kd9c,Kd9h,Qs9c,Qs9h,Qs9d,Qc9s,Qc9h,Qc9d,Qh9s,Qh9c,Qh9d,Qd9s,Qd9c,Qd9h,Js9c,Js9h,Js9d,Jc9s,Jc9h,Jc9d,Jh9s,Jh9c,Jh9d,Jd9s,Jd9c,Jd9h,Ts9c,Ts9h,Ts9d,Tc9s,Tc9h,Tc9d,Th9s,Th9c,Th9d,Td9s,Td9c,Td9h,9s9c,9s9h,9s9d,9c9h,9c9d,9h9d,9s8s,9c8c,9h8h,9d8d,9s7s,9c7c,9h7h,9d7d,9s6s,9c6c,9h6h,9d6d,As8c,As8h,As8d,Ac8s,Ac8h,Ac8d,Ah8s,Ah8c,Ah8d,Ad8s,Ad8c,Ad8h,Ks8c,Ks8h,Ks8d,Kc8s,Kc8h,Kc8d,Kh8s,Kh8c,Kh8d,Kd8s,Kd8c,Kd8h,Js8c,Js8h,Js8d,Jc8s,Jc8h,Jc8d,Ts8c,Ts8h,Ts8d,Tc8s,Tc8h,Tc8d,9s8c,9s8h,9s8d,9c8s,9c8h,9c8d,8s8c,8s8h,8s8d,8c8h,8c8d,8h8d,8s7s,8c7c,8h7h,8d7d,8s6s,8c6c,8h6h,8d6d,As7c,As7h,As7d,Ac7s,Ac7h,Ac7d,Ah7s,Ah7c,Ah7d,Ad7s,Ad7c,Ad7h,7s7c,7s7h,7s7d,7c7h,7c7d,7h7d,7s6s,7c6c,7h6h,7d6d,7s5s,7c5c,7h5h,7d5d,As6c,As6h,As6d,Ac6s,Ac6h,Ac6d,Ah6s,Ah6c,Ah6d,Ad6s,Ad6c,Ad6h,6s6c,6s6h,6s6d,6c6h,6c6d,6h6d,6s5s,6c5c,6h5h,6d5d,6s4s,6c4c,As5c,As5h,As5d,Ac5s,Ac5h,Ac5d,Ah5s,Ah5c,Ah5d,Ad5s,Ad5c,Ad5h,5s5c,5s5h,5s5d,5c5h,5c5d,5h5d,5s4s,5c4c,5h4h,5d4d,As4c,As4h,As4d,Ac4s,Ac4h,Ac4d,Ah4s,Ah4c,Ah4d,Ad4s,Ad4c,Ad4h,4s4c,4s4h,4s4d,4c4h,4c4d,4h4d,3s3c,3s3h,3s3d,3c3h,3c3d,3h3d,2s2c,2s2h,2s2d,2c2h,2c2d,2h2d"
+                    ],
+                    [COLORS.FOLD]: ["Js3s,Jc3c,Jh3h,Jd3d,Js2s,Jc2c,Jh2h,Jd2d,Ts5s,Tc5c,Th5h,Td5d,9s5s,9c5c,9h5h,9d5d,Qs8c,Qs8h,Qs8d,Qc8s,Qc8h,Qc8d,Qh8s,Qh8c,Qh8d,Qd8s,Qd8c,Qd8h,Jh8s,Jh8c,Jh8d,Jd8s,Jd8c,Jd8h,Th8s,Th8c,Th8d,Td8s,Td8c,Td8h,9h8s,9h8c,9h8d,9d8s,9d8c,9d8h,8s5s,8c5c,8h5h,8d5d,Ks7c,Ks7h,Ks7d,Kc7s,Kc7h,Kc7d,Kh7s,Kh7c,Kh7d,Kd7s,Kd7c,Kd7h,8s7c,8s7h,8s7d,8c7s,8c7h,8c7d,8h7s,8h7c,8h7d,8d7s,8d7c,8d7h,6h4h,6d4d,4s3s,4c3c,4h3h,4d3d,As3c,As3h,As3d,Ac3s,Ac3h,Ac3d,Ah3s,Ah3c,Ah3d,Ad3s,Ad3c,Ad3h,As2c,As2h,As2d,Ac2s,Ac2h,Ac2d,Ah2s,Ah2c,Ah2d,Ad2s,Ad2c,Ad2h"]
+                }
+            },
+            {
+                name: "BTN vs SB",
+                category: "BTN",
+                actions: {
+                    [COLORS.RAISE]: [
+                        "AsAc,AsAh,AsAd,AcAh,AcAd,AhAd,AsKs,AcKc,AhKh,AdKd,As8s,As7s,As6s,As5s,AsKc,AsKh,AsKd,AcKs,AcKh,AcKd,AhKs,AhKc,AhKd,AdKs,AdKc,AdKh,KsKc,KsKh,KsKd,KcKh,KcKd,KhKd,Ks9s,KsQc,KsQh,KsQd,KcQs,KcQh,KcQd,QsQc,QsQh,QsQd,QcQh,QcQd,QhQd,Qs9s,AsJc,AsJh,AsJd,AcJs,AcJh,AcJd,JsJc,JsJh,JsJd,Js9s,AsTc,AsTh,AsTd,AcTs,AcTh,AcTd,TsTc,TsTh,Ts8s"
+                    ],
+                    [COLORS.CALL]: [
+                        "AsQs,AcQc,AhQh,AdQd,AsJs,AcJc,AhJh,AdJd,AsTs,AcTc,AhTh,AdTd,As9s,Ac9c,Ah9h,Ad9d,Ac8c,Ah8h,Ad8d,Ac7c,Ah7h,Ad7d,Ac5c,Ah5h,Ad5d,As4s,Ac4c,Ah4h,Ad4d,As3s,Ac3c,Ah3h,Ad3d,KsQs,KcQc,KhQh,KdQd,KsJs,KcJc,KhJh,KdJd,KsTs,KcTc,KhTh,KdTd,Kc9c,Kh9h,Kd9d,AsQc,AsQh,AsQd,AcQs,AcQh,AcQd,AhQs,AhQc,AhQd,AdQs,AdQc,AdQh,KhQs,KhQc,KhQd,KdQs,KdQc,KdQh,QsJs,QcJc,QhJh,QdJd,QsTs,QcTc,QhTh,QdTd,Qc9c,Qh9h,Qd9d,AhJs,AhJc,AhJd,AdJs,AdJc,AdJh,JcJh,JcJd,JhJd,JsTs,JcTc,JhTh,JdTd,Jc9c,Jh9h,Jd9d,TsTd,TcTh,TcTd,ThTd,Ts9s,Tc9c,Th9h,Td9d,Tc8c,Th8h,Td8d,9s9c,9s9h,9s9d,9c9h,9c9d,9h9d,9s8s,9c8c,9h8h,9d8d,8s8c,8s8h,8s8d,8c8h,8c8d,8h8d,8s7s,8c7c,8h7h,8d7d,7s7c,7s7h,7s7d,7c7h,7c7d,7h7d,7s6s,7c6c,7h6h,7d6d,6s6c,6s6h,6s6d,6c6h,6c6d,6h6d,6s5s,6c5c,6h5h,6d5d,5s5c,5s5h,5s5d,5c5h,5c5d,5h5d,5s4s,5c4c,5h4h,5d4d,4s4c,4s4h,4s4d,4c4h,4c4d,4h4d"
+                    ],
+                    [COLORS.FOLD]: ["Ac6c,Ah6h,Ad6d,As2s,Ac2c,Ah2h,Ad2d,KsJc,KsJh,KsJd,KcJs,KcJh,KcJd,KhJs,KhJc,KhJd,KdJs,KdJc,KdJh,QsJc,QsJh,QsJd,QcJs,QcJh,QcJd,QhJs,QhJc,QhJd,QdJs,QdJc,QdJh,AhTs,AhTc,AhTd,AdTs,AdTc,AdTh,KsTc,KsTh,KsTd,KcTs,KcTh,KcTd,KhTs,KhTc,KhTd,KdTs,KdTc,KdTh"]
+                }
+            },
+            {
+                name: "BTN vs BB",
+                category: "BTN",
+                actions: {
+                    [COLORS.RAISE]: [
+                        "AsAc,AsAh,AsAd,AcAh,AcAd,AhAd,AsKs,AcKc,AhKh,AdKd,As8s,As7s,As6s,As5s,AsKc,AsKh,AsKd,AcKs,AcKh,AcKd,AhKs,AhKc,AhKd,AdKs,AdKc,AdKh,KsKc,KsKh,KsKd,KcKh,KcKd,KhKd,Ks9s,KsQc,KsQh,KsQd,KcQs,KcQh,KcQd,QsQc,QsQh,QsQd,QcQh,QcQd,QhQd,Qs9s,AsJc,AsJh,AsJd,AcJs,AcJh,AcJd,JsJc,JsJh,JsJd,Js9s,AsTc,AsTh,AsTd,AcTs,AcTh,AcTd,TsTc,TsTh,Ts8s"
+                    ],
+                    [COLORS.CALL]: [
+                        "AsQs,AcQc,AhQh,AdQd,AsJs,AcJc,AhJh,AdJd,AsTs,AcTc,AhTh,AdTd,As9s,Ac9c,Ah9h,Ad9d,Ac8c,Ah8h,Ad8d,Ac7c,Ah7h,Ad7d,Ac5c,Ah5h,Ad5d,As4s,Ac4c,Ah4h,Ad4d,As3s,Ac3c,Ah3h,Ad3d,KsQs,KcQc,KhQh,KdQd,KsJs,KcJc,KhJh,KdJd,KsTs,KcTc,KhTh,KdTd,Kc9c,Kh9h,Kd9d,AsQc,AsQh,AsQd,AcQs,AcQh,AcQd,AhQs,AhQc,AhQd,AdQs,AdQc,AdQh,KhQs,KhQc,KhQd,KdQs,KdQc,KdQh,QsJs,QcJc,QhJh,QdJd,QsTs,QcTc,QhTh,QdTd,Qc9c,Qh9h,Qd9d,AhJs,AhJc,AhJd,AdJs,AdJc,AdJh,JcJh,JcJd,JhJd,JsTs,JcTc,JhTh,JdTd,Jc9c,Jh9h,Jd9d,TsTd,TcTh,TcTd,ThTd,Ts9s,Tc9c,Th9h,Td9d,Tc8c,Th8h,Td8d,9s9c,9s9h,9s9d,9c9h,9c9d,9h9d,9s8s,9c8c,9h8h,9d8d,8s8c,8s8h,8s8d,8c8h,8c8d,8h8d,8s7s,8c7c,8h7h,8d7d,7s7c,7s7h,7s7d,7c7h,7c7d,7h7d,7s6s,7c6c,7h6h,7d6d,6s6c,6s6h,6s6d,6c6h,6c6d,6h6d,6s5s,6c5c,6h5h,6d5d,5s5c,5s5h,5s5d,5c5h,5c5d,5h5d,5s4s,5c4c,5h4h,5d4d,4s4c,4s4h,4s4d,4c4h,4c4d,4h4d"
+                    ],
+                    [COLORS.FOLD]: ["Ac6c,Ah6h,Ad6d,As2s,Ac2c,Ah2h,Ad2d,KsJc,KsJh,KsJd,KcJs,KcJh,KcJd,KhJs,KhJc,KhJd,KdJs,KdJc,KdJh,QsJc,QsJh,QsJd,QcJs,QcJh,QcJd,QhJs,QhJc,QhJd,QdJs,QdJc,QdJh,AhTs,AhTc,AhTd,AdTs,AdTc,AdTh,KsTc,KsTh,KsTd,KcTs,KcTh,KcTd,KhTs,KhTc,KhTd,KdTs,KdTc,KdTh"]
+                }
+            },
+            {
+                name: "SB vs BTN",
+                category: "SB",
+                actions: {
+                    [COLORS.RAISE]: [
+                        "AsAc,AsAh,AsAd,AcAh,AcAd,AhAd,AsKs,AcKc,AhKh,AdKd,AsQs,AcQc,AhQh,AdQd,AsJs,AcJc,AhJh,AdJd,AsTs,AcTc,AhTh,AdTd,As9s,Ac9c,Ah9h,Ad9d,As8s,Ac8c,Ah8h,Ad8d,As7s,Ac7c,Ah7h,Ad7d,As5s,Ac5c,Ah5h,Ad5d,As4s,Ac4c,Ah4h,Ad4d,AsKc,AsKh,AsKd,AcKs,AcKh,AcKd,AhKs,AhKc,AhKd,AdKs,AdKc,AdKh,KsKc,KsKh,KsKd,KcKh,KcKd,KhKd,KsQs,KcQc,KhQh,KdQd,KsJs,KcJc,KhJh,KdJd,KsTs,KcTc,KhTh,KdTd,Ks9s,Kc9c,Kh9h,Kd9d,AsQc,AsQh,AsQd,AcQs,AcQh,AcQd,AhQs,AhQc,AhQd,AdQs,AdQc,AdQh,KsQc,KsQh,KsQd,KcQs,KcQh,KcQd,KhQs,KhQc,KhQd,KdQs,KdQc,KdQh,QsQc,QsQh,QsQd,QcQh,QcQd,QhQd,QsJs,QcJc,QhJh,QdJd,QsTs,QcTc,QhTh,QdTd,Qs9s,Qc9c,Qh9h,Qd9d,AsJc,AsJh,AsJd,AcJs,AcJh,AcJd,AhJs,AhJc,AhJd,AdJs,AdJc,AdJh,KsJc,KsJh,KsJd,KcJs,KcJh,KcJd,JsJc,JsJh,JsJd,JcJh,JcJd,JhJd,JsTs,JcTc,JhTh,JdTd,Js9s,Jc9c,Jh9h,Jd9d,AsTc,AsTh,AsTd,AcTs,AcTh,AcTd,TsTc,TsTh,TsTd,TcTh,TcTd,ThTd,Ts9s,Tc9c,Th9h,Td9d,Ts8s,Tc8c,9s9c,9s9h,9s9d,9c9h,9c9d,9h9d,9s8s,8s8c,8s8h,8s8d,8c8h,8c8d,8h8d,8s7s,7s7c,7s7h,7s7d,7c7h,7c7d,7h7d,7s6s,6s6c,6s6h,6s6d,6s5s"
+                    ],
+                    [COLORS.FOLD]: [
+                        "As6s,Ac6c,Ah6h,Ad6d,As3s,Ac3c,Ah3h,Ad3d,As2s,Ac2c,Ah2h,Ad2d,KhJs,KhJc,KhJd,KdJs,KdJc,KdJh,AhTs,AhTc,AhTd,AdTs,AdTc,AdTh,Th8h,Td8d,9c8c,9h8h,9d8d,8c7c,8h7h,8d7d,7c6c,7h6h,7d6d,6c6h,6c6d,6h6d,6c5c,6h5h,6d5d,5s5c,5s5h,5s5d,5c5h,5c5d,5h5d"
+                    ]
+                }
+            },
+            {
+                name: "BB vs BTN",
+                category: "BB",
+                actions: {
+                    [COLORS.RAISE]: [
+                        "AsAc,AsAh,AsAd,AcAh,AcAd,AhAd,AsKs,AcKc,AhKh,AdKd,AsQs,AcQc,AhQh,AdQd,AsJs,AcJc,AhJh,AdJd,As5s,Ac5c,Ah5h,Ad5d,As4s,Ac4c,AsKc,AsKh,AsKd,AcKs,AcKh,AcKd,AhKs,AhKc,AhKd,AdKs,AdKc,AdKh,KsKc,KsKh,KsKd,KcKh,KcKd,KhKd,KsQs,KcQc,KhQh,KdQd,KsJs,KcJc,KsTs,KcTc,Ks6s,Kc6c,Ks3s,Kc3c,AsQc,AsQh,AsQd,AcQs,AcQh,AcQd,AhQs,AhQc,AhQd,AdQs,AdQc,AdQh,KsQc,KsQh,KsQd,KcQs,KcQh,KcQd,QsQc,QsQh,QsQd,QcQh,QcQd,QhQd,QsJs,QcJc,QsTs,QcTc,QhTh,QdTd,AsJc,AsJh,AsJd,AcJs,AcJh,AcJd,KsJc,KsJh,KsJd,KcJs,KcJh,KcJd,JsJc,JsJh,JsJd,JcJh,JcJd,JhJd,JsTs,JcTc,JhTh,JdTd,Js9s,Jc9c,Jh9h,Jd9d,Js8s,Jc8c,Js7s,Jc7c,Js6s,Jc6c,KsTc,KsTh,KsTd,KcTs,KcTh,KcTd,TsTc,TsTh,TsTd,TcTh,TcTd,ThTd,Ts9s,Tc9c,Th9h,Td9d,Ts8s,Tc8c,Th8h,Td8d,Ts7s,Tc7c,Ts6s,Tc6c,Ks9c,Ks9h,Ks9d,Kc9s,Kc9h,Kc9d,9s9c,9s9h,9s9d,9c9h,9c9d,9h9d,9s8s,9c8c,8s7s,8c7c,As7c,As7h,As7d,Ac7s,Ac7h,Ac7d,7s6s,7c6c,6s5s,6c5c,As5c,As5h,As5d,Ac5s,Ac5h,Ac5d,5s4s,5c4c,As4c,As4h,As4d,Ac4s,Ac4h,Ac4d"
+                    ],
+                    [COLORS.CALL]: [
+                        "AsTs,AcTc,AhTh,AdTd,As9s,Ac9c,Ah9h,Ad9d,As8s,Ac8c,Ah8h,Ad8d,As7s,Ac7c,Ah7h,Ad7d,As6s,Ac6c,Ah6h,Ad6d,Ah4h,Ad4d,As3s,Ac3c,Ah3h,Ad3d,As2s,Ac2c,Ah2h,Ad2d,KhJh,KdJd,KhTh,KdTd,Ks9s,Kc9c,Kh9h,Kd9d,Ks8s,Kc8c,Kh8h,Kd8d,Ks7s,Kc7c,Kh7h,Kd7d,Kh6h,Kd6d,Ks5s,Kc5c,Kh5h,Kd5d,Ks4s,Kc4c,Kh4h,Kd4d,Kh3h,Kd3d,Ks2s,Kc2c,Kh2h,Kd2d,KhQs,KhQc,KhQd,KdQs,KdQc,KdQh,QhJh,QdJd,Qs9s,Qc9c,Qh9h,Qd9d,Qs8s,Qc8c,Qh8h,Qd8d,Qs7s,Qc7c,Qh7h,Qd7d,Qs6s,Qc6c,Qh6h,Qd6d,Qs5s,Qc5c,Qh5h,Qd5d,Qs4s,Qc4c,Qh4h,Qd4d,Qs3s,Qc3c,Qh3h,Qd3d,Qs2s,Qc2c,Qh2h,Qd2d,AhJs,AhJc,AhJd,AdJs,AdJc,AdJh,KhJs,KhJc,KhJd,KdJs,KdJc,KdJh,QsJc,QsJh,QsJd,QcJs,QcJh,QcJd,QhJs,QhJc,QhJd,QdJs,QdJc,QdJh,Jh8h,Jd8d,Jh7h,Jd7d,Jh6h,Jd6d,Js5s,Jc5c,Jh5h,Jd5d,Js4s,Jc4c,Jh4h,Jd4d,Js3s,Jc3c,Jh3h,Jd3d,Js2s,Jc2c,AsTc,AsTh,AsTd,AcTs,AcTh,AcTd,AhTs,AhTc,AhTd,AdTs,AdTc,AdTh,KhTs,KhTc,KhTd,KdTs,KdTc,KdTh,QsTc,QsTh,QsTd,QcTs,QcTh,QcTd,QhTs,QhTc,QhTd,QdTs,QdTc,QdTh,JsTc,JsTh,JsTd,JcTs,JcTh,JcTd,JhTs,JhTc,JhTd,JdTs,JdTc,JdTh,Th7h,Td7d,Th6h,Td6d,As9c,As9h,As9d,Ac9s,Ac9h,Ac9d,Ah9s,Ah9c,Ah9d,Ad9s,Ad9c,Ad9h,Kh9s,Kh9c,Kh9d,Kd9s,Kd9c,Kd9h,Qs9c,Qs9h,Qs9d,Qc9s,Qc9h,Qc9d,Qh9s,Qh9c,Qh9d,Qd9s,Qd9c,Qd9h,Js9c,Js9h,Js9d,Jc9s,Jc9h,Jc9d,Jh9s,Jh9c,Jh9d,Jd9s,Jd9c,Jd9h,Ts9c,Ts9h,Ts9d,Tc9s,Tc9h,Tc9d,Th9s,Th9c,Th9d,Td9s,Td9c,Td9h,9h8h,9d8d,9s7s,9c7c,9h7h,9d7d,9s6s,9c6c,9h6h,9d6d,9s5s,9c5c,As8c,As8h,As8d,Ac8s,Ac8h,Ac8d,Ah8s,Ah8c,Ah8d,Ad8s,Ad8c,Ad8h,Ts8c,Ts8h,Ts8d,Tc8s,Tc8h,Tc8d,8s8c,8s8h,8s8d,8c8h,8c8d,8h8d,8h7h,8d7d,8s6s,8c6c,8h6h,8d6d,8s5s,8c5c,8h5h,8d5d,Ah7s,Ah7c,Ah7d,Ad7s,Ad7c,Ad7h,7s7c,7s7h,7s7d,7c7h,7c7d,7h7d,7h6h,7d6d,7s5s,7c5c,7h5h,7d5d,7s4s,7c4c,7h4h,7d4d,6s6c,6s6h,6s6d,6c6h,6c6d,6h6d,6h5h,6d5d,6s4s,6c4c,6h4h,6d4d,6s3s,6c3c,6h3h,6d3d,Ah5s,Ah5c,Ah5d,Ad5s,Ad5c,Ad5h,5s5c,5s5h,5s5d,5c5h,5c5d,5h5d,5h4h,5d4d,5s3s,5c3c,5h3h,5d3d,5s2s,5c2c,5h2h,5d2d,Ah4s,Ah4c,Ah4d,Ad4s,Ad4c,Ad4h,4s4c,4s4h,4s4d,4c4h,4c4d,4h4d,4s3s,4c3c,4h3h,4d3d,4s2s,4c2c,4h2h,4d2d,3s3c,3s3h,3s3d,3c3h,3c3d,3h3d,2s2c,2s2h,2s2d,2c2h,2c2d,2h2d"
+                    ],
+                    [COLORS.FOLD]: [
+                        "Jh2h,Jd2d,Ts5s,Tc5c,Th5h,Td5d,9h5h,9d5d,Ks8c,Ks8h,Ks8d,Kc8s,Kc8h,Kc8d,Kh8s,Kh8c,Kh8d,Kd8s,Kd8c,Kd8h,Qs8c,Qs8h,Qs8d,Qc8s,Qc8h,Qc8d,Qh8s,Qh8c,Qh8d,Qd8s,Qd8c,Qd8h,Js8c,Js8h,Js8d,Jc8s,Jc8h,Jc8d,Jh8s,Jh8c,Jh8d,Jd8s,Jd8c,Jd8h,Th8s,Th8c,Th8d,Td8s,Td8c,Td8h,9s8c,9s8h,9s8d,9c8s,9c8h,9c8d,9h8s,9h8c,9h8d,9d8s,9d8c,9d8h,8s4s,8c4c,8h4h,8d4d,8s7c,8s7h,8s7d,8c7s,8c7h,8c7d,8h7s,8h7c,8h7d,8d7s,8d7c,8d7h,7s3s,7c3c,7h3h,7d3d,As6c,As6h,As6d,Ac6s,Ac6h,Ac6d,Ah6s,Ah6c,Ah6d,Ad6s,Ad6c,Ad6h,7s6c,7s6h,7s6d,7c6s,7c6h,7c6d,7h6s,7h6c,7h6d,7d6s,7d6c,7d6h,6s2s,6c2c,6h2h,6d2d,As3c,As3h,As3d,Ac3s,Ac3h,Ac3d,Ah3s,Ah3c,Ah3d,Ad3s,Ad3c,Ad3h,3s2s,3c2c,3h2h,3d2d,As2c,As2h,As2d,Ac2s,Ac2h,Ac2d,Ah2s,Ah2c,Ah2d,Ad2s,Ad2c,Ad2h"
+                    ]
+                }
+            },
+            {
+                name: "BB vs SB",
+                category: "BB",
+                actions: {
+                    [COLORS.RAISE]: [
+                        "AsAc,AsAh,AsAd,AcAh,AcAd,AhAd,AsKs,AcKc,AhKh,AdKd,AsQs,AcQc,AhQh,AdQd,AsJs,AcJc,AhJh,AdJd,AsTs,AcTc,AhTh,AdTd,As5s,Ac5c,Ah5h,Ad5d,As4s,Ac4c,Ah4h,Ad4d,AsKc,AsKh,AsKd,AcKs,AcKh,AcKd,AhKs,AhKc,AhKd,AdKs,AdKc,AdKh,KsKc,KsKh,KsKd,KcKh,KcKd,KhKd,KsQs,KcQc,KhQh,KdQd,KsJs,KcJc,KhJh,KdJd,KsTs,KcTc,KhTh,KdTd,Ks9s,Kc9c,AsQc,AsQh,AsQd,AcQs,AcQh,AcQd,AhQs,AhQc,AhQd,AdQs,AdQc,AdQh,KsQc,KsQh,KsQd,KcQs,KcQh,KcQd,QsQc,QsQh,QsQd,QcQh,QcQd,QhQd,QsJs,QcJc,QhJh,QdJd,QsTs,QcTc,QhTh,QdTd,AsJc,AsJh,AsJd,AcJs,AcJh,AcJd,JsJc,JsJh,JsJd,JcJh,JcJd,JhJd,JsTs,JcTc,JhTh,JdTd,Js6s,Jc6c,Js5s,Jc5c,Js4s,Jc4c,TsTc,TsTh,TsTd,TcTh,TcTd,ThTd,Ts9s,Tc9c,Th9h,Td9d,Ts6s,Tc6c,Ts5s,Tc5c,Ts4s,Tc4c,Ts3s,Tc3c,Ts2s,Tc2c,Ks9c,Ks9h,Ks9d,Kc9s,Kc9h,Kc9d,Qs9c,Qs9h,Qs9d,Qc9s,Qc9h,Qc9d,Js9c,Js9h,Js9d,Jc9s,Jc9h,Jc9d,9s9c,9s9h,9s9d,9s8s,9c8c,9h8h,9d8d,Ks8c,Ks8h,Ks8d,Kc8s,Kc8h,Kc8d,Qs8c,Qs8h,Qs8d,Qc8s,Qc8h,Qc8d,Js8c,Js8h,Js8d,Jc8s,Jc8h,Jc8d,Ts8c,Ts8h,Ts8d,Tc8s,Tc8h,Tc8d,8s8c,8s8h,8s8d,8s7s,8c7c,8h7h,8d7d,As7c,As7h,As7d,Ac7s,Ac7h,Ac7d,Ks7c,Ks7h,Ks7d,Kc7s,Kc7h,Kc7d,7s7c,7s7h,7s7d,7s6s,7c6c,7h6h,7d6d,As6c,As6h,As6d,Ac6s,Ac6h,Ac6d,Ks6c,Ks6h,Ks6d,Kc6s,Kc6h,Kc6d,6s6c,6s6h,6s6d,6s5s,6c5c,5s4s,5c4c,5h4h,5d4d,As4c,As4h,As4d,Ac4s,Ac4h,Ac4d,As3c,As3h,As3d,Ac3s,Ac3h,Ac3d,As2c,As2h,As2d,Ac2s,Ac2h,Ac2d"
+                    ],
+                    [COLORS.CALL]: [
+                        "As9s,Ac9c,Ah9h,Ad9d,As8s,Ac8c,Ah8h,Ad8d,As7s,Ac7c,Ah7h,Ad7d,As6s,Ac6c,Ah6h,Ad6d,As3s,Ac3c,Ah3h,Ad3d,As2s,Ac2c,Ah2h,Ad2d,Kh9h,Kd9d,Ks8s,Kc8c,Kh8h,Kd8d,Ks7s,Kc7c,Kh7h,Kd7d,Ks6s,Kc6c,Kh6h,Kd6d,Ks5s,Kc5c,Kh5h,Kd5d,Ks4s,Kc4c,Kh4h,Kd4d,Ks3s,Kc3c,Kh3h,Kd3d,Ks2s,Kc2c,Kh2h,Kd2d,KhQs,KhQc,KhQd,KdQs,KdQc,KdQh,Qs9s,Qc9c,Qh9h,Qd9d,Qs8s,Qc8c,Qh8h,Qd8d,Qs7s,Qc7c,Qh7h,Qd7d,Qs6s,Qc6c,Qh6h,Qd6d,Qs5s,Qc5c,Qh5h,Qd5d,Qs4s,Qc4c,Qh4h,Qd4d,Qs3s,Qc3c,Qh3h,Qd3d,Qs2s,Qc2c,Qh2h,Qd2d,AhJs,AhJc,AhJd,AdJs,AdJc,AdJh,KsJc,KsJh,KsJd,KcJs,KcJh,KcJd,KhJs,KhJc,KhJd,KdJs,KdJc,KdJh,QsJc,QsJh,QsJd,QcJs,QcJh,QcJd,QhJs,QhJc,QhJd,QdJs,QdJc,QdJh,Js9s,Jc9c,Jh9h,Jd9d,Js8s,Jc8c,Jh8h,Jd8d,Js7s,Jc7c,Jh7h,Jd7d,Jh6h,Jd6d,Jh5h,Jd5d,Jh4h,Jd4d,Js3s,Jc3c,Jh3h,Jd3d,Js2s,Jc2c,Jh2h,Jd2d,AsTc,AsTh,AsTd,AcTs,AcTh,AcTd,AhTs,AhTc,AhTd,AdTs,AdTc,AdTh,KsTc,KsTh,KsTd,KcTs,KcTh,KcTd,KhTs,KhTc,KhTd,KdTs,KdTc,KdTh,QsTc,QsTh,QsTd,QcTs,QcTh,QcTd,QhTs,QhTc,QhTd,QdTs,QdTc,QdTh,JsTc,JsTh,JsTd,JcTs,JcTh,JcTd,JhTs,JhTc,JhTd,JdTs,JdTc,JdTh,Ts8s,Tc8c,Th8h,Td8d,Ts7s,Tc7c,Th7h,Td7d,Th6h,Td6d,Th5h,Td5d,Th4h,Td4d,Th3h,Td3d,Th2h,Td2d,As9c,As9h,As9d,Ac9s,Ac9h,Ac9d,Ah9s,Ah9c,Ah9d,Ad9s,Ad9c,Ad9h,Kh9s,Kh9c,Kh9d,Kd9s,Kd9c,Kd9h,Qh9s,Qh9c,Qh9d,Qd9s,Qd9c,Qd9h,Jh9s,Jh9c,Jh9d,Jd9s,Jd9c,Jd9h,Ts9c,Ts9h,Ts9d,Tc9s,Tc9h,Tc9d,Th9s,Th9c,Th9d,Td9s,Td9c,Td9h,9c9h,9c9d,9h9d,9s7s,9c7c,9h7h,9d7d,9s6s,9c6c,9h6h,9d6d,9s5s,9c5c,9h5h,9d5d,As8c,As8h,As8d,Ac8s,Ac8h,Ac8d,Ah8s,Ah8c,Ah8d,Ad8s,Ad8c,Ad8h,Kh8s,Kh8c,Kh8d,Kd8s,Kd8c,Kd8h,Qh8s,Qh8c,Qh8d,Qd8s,Qd8c,Qd8h,Jh8s,Jh8c,Jh8d,Jd8s,Jd8c,Jd8h,Th8s,Th8c,Th8d,Td8s,Td8c,Td8h,9s8c,9s8h,9s8d,9c8s,9c8h,9c8d,9h8s,9h8c,9h8d,9d8s,9d8c,9d8h,8c8h,8c8d,8h8d,8s6s,8c6c,8h6h,8d6d,8s5s,8c5c,8h5h,8d5d,8s4s,8c4c,8h4h,8d4d,Ah7s,Ah7c,Ah7d,Ad7s,Ad7c,Ad7h,Kh7s,Kh7c,Kh7d,Kd7s,Kd7c,Kd7h,8s7c,8s7h,8s7d,8c7s,8c7h,8c7d,8h7s,8h7c,8h7d,8d7s,8d7c,8d7h,7c7h,7c7d,7h7d,7s5s,7c5c,7h5h,7d5d,7s4s,7c4c,7h4h,7d4d,7s3s,7c3c,Ah6s,Ah6c,Ah6d,Ad6s,Ad6c,Ad6h,7s6c,7s6h,7s6d,7c6s,7c6h,7c6d,7h6s,7h6c,7h6d,7d6s,7d6c,7d6h,6c6h,6c6d,6h6d,6h5h,6d5d,6s4s,6c4c,6h4h,6d4d,6s3s,6c3c,6h3h,6d3d,As5c,As5h,As5d,Ac5s,Ac5h,Ac5d,Ah5s,Ah5c,Ah5d,Ad5s,Ad5c,Ad5h,6s5c,6s5h,6s5d,6c5s,6c5h,6c5d,5s5c,5s5h,5s5d,5c5h,5c5d,5h5d,5s3s,5c3c,5h3h,5d3d,5s2s,5c2c,5h2h,5d2d,Ah4s,Ah4c,Ah4d,Ad4s,Ad4c,Ad4h,5s4c,5s4h,5s4d,5c4s,5c4h,5c4d,4s4c,4s4h,4s4d,4c4h,4c4d,4h4d,4s3s,4c3c,4h3h,4d3d,4s2s,4c2c,4h2h,4d2d,Ah3s,Ah3c,Ah3d,Ad3s,Ad3c,Ad3h,3s3c,3s3h,3s3d,3c3h,3c3d,3h3d,3s2s,3c2c,3h2h,3d2d,Ah2s,Ah2c,Ah2d,Ad2s,Ad2c,Ad2h,2s2c,2s2h,2s2d,2c2h,2c2d,2h2d"
+                    ],
+                    [COLORS.FOLD]: [
+                        "9s4s,9c4c,9h4h,9d4d,9s3s,9c3c,9h3h,9d3d,9s2s,9c2c,9h2h,9d2d,8s3s,8c3c,8h3h,8d3d,8s2s,8c2c,8h2h,8d2d,Qs7c,Qs7h,Qs7d,Qc7s,Qc7h,Qc7d,Qh7s,Qh7c,Qh7d,Qd7s,Qd7c,Qd7h,Js7c,Js7h,Js7d,Jc7s,Jc7h,Jc7d,Jh7s,Jh7c,Jh7d,Jd7s,Jd7c,Jd7h,Ts7c,Ts7h,Ts7d,Tc7s,Tc7h,Tc7d,Th7s,Th7c,Th7d,Td7s,Td7c,Td7h,9s7c,9s7h,9s7d,9c7s,9c7h,9c7d,9h7s,9h7c,9h7d,9d7s,9d7c,9d7h,7h3h,7d3d,7s2s,7c2c,7h2h,7d2d,Kh6s,Kh6c,Kh6d,Kd6s,Kd6c,Kd6h,8s6c,8s6h,8s6d,8c6s,8c6h,8c6d,8h6s,8h6c,8h6d,8d6s,8d6c,8d6h,6s2s,6c2c,6h2h,6d2d,Ks5c,Ks5h,Ks5d,Kc5s,Kc5h,Kc5d,Kh5s,Kh5c,Kh5d,Kd5s,Kd5c,Kd5h,7s5c,7s5h,7s5d,7c5s,7c5h,7c5d,7h5s,7h5c,7h5d,7d5s,7d5c,7d5h,6h5s,6h5c,6h5d,6d5s,6d5c,6d5h,Ks4c,Ks4h,Ks4d,Kc4s,Kc4h,Kc4d,Kh4s,Kh4c,Kh4d,Kd4s,Kd4c,Kd4h,6s4c,6s4h,6s4d,6c4s,6c4h,6c4d,6h4s,6h4c,6h4d,6d4s,6d4c,6d4h,5h4s,5h4c,5h4d,5d4s,5d4c,5d4h,5s3c,5s3h,5s3d,5c3s,5c3h,5c3d,5h3s,5h3c,5h3d,5d3s,5d3c,5d3h,4s3c,4s3h,4s3d,4c3s,4c3h,4c3d,4h3s,4h3c,4h3d,4d3s,4d3c,4d3h"
+                    ]
+                }
+            },
         ];
 
         let gridState = [];
@@ -228,10 +466,131 @@
         let selectedCell = null;
 
         function init() {
+            createSidebarPresets();
             createPalette();
             createMatrix();
             updateStats();
             window.addEventListener('mouseup', () => isDragging = false);
+        }
+
+        function createSidebarPresets() {
+            const container = document.getElementById('sidebarContent');
+            container.innerHTML = '';
+
+            const categories = {};
+            PRESETS.forEach(p => {
+                const cat = p.category || 'General';
+                if (!categories[cat]) categories[cat] = [];
+                categories[cat].push(p);
+            });
+
+            Object.entries(categories).forEach(([catName, presets]) => {
+                const section = document.createElement('div');
+                section.className = 'sidebar-section';
+
+                const title = document.createElement('div');
+                title.className = 'sidebar-section-title';
+                title.innerText = catName;
+                section.appendChild(title);
+
+                presets.forEach(preset => {
+                    const btn = document.createElement('button');
+                    btn.className = 'preset-btn';
+
+                    // Automatically compute raise frequency for the tag
+                    const raisePct = getRaisePercentage(preset);
+                    btn.innerHTML = `<span>${preset.name}</span> <span class="preset-tag">(${raisePct})</span>`;
+                    btn.onclick = () => {
+                        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        applyPreset(preset);
+                    };
+                    section.appendChild(btn);
+                });
+
+                container.appendChild(section);
+            });
+        }
+
+        function getRaisePercentage(preset) {
+            const raiseActions = preset.actions[COLORS.RAISE];
+            if (!raiseActions) return '0.0%';
+
+            // Normalize array or comma-separated string formats into unique hand tokens
+            const handList = (Array.isArray(raiseActions) ? raiseActions : [raiseActions])
+                .flatMap(item => typeof item === 'string' ? item.split(',') : item)
+                .map(h => h.trim())
+                .filter(Boolean);
+
+            const uniqueHands = new Set(handList);
+            let comboCount = 0;
+
+            uniqueHands.forEach(hand => {
+                if (hand.length === 4) {
+                    comboCount += 1;  // Single suit combination (e.g. "AsKs", "2s2c")
+                } else if (hand.length === 2) {
+                    comboCount += 6;  // Pocket pair (e.g. "AA")
+                } else if (hand.length === 3) {
+                    if (hand.endsWith('s')) comboCount += 4;   // Suited hand (e.g. "AKs")
+                    if (hand.endsWith('o')) comboCount += 12;  // Offsuit hand (e.g. "AKo")
+                }
+            });
+
+            return `${((comboCount / 1326) * 100).toFixed(1)}%`;
+        }
+
+        function applyPreset(preset) {
+            // Reset all cells to CLEAR color
+            gridState.forEach(state => {
+                Object.keys(state.handMap).forEach(combo => {
+                    state.handMap[combo] = COLORS.CLEAR;
+                });
+            });
+
+            // Create fast lookup maps for performance
+            const comboToState = {};
+            const labelToState = {};
+            gridState.forEach(s => {
+                labelToState[s.label] = s;
+                Object.keys(s.handMap).forEach(k => comboToState[k] = s);
+            });
+
+            // Apply target preset colors
+            Object.entries(preset.actions).forEach(([color, hands]) => {
+                if (!hands) return;
+
+                // Parse strings or arrays, splitting comma-separated items
+                const handList = (Array.isArray(hands) ? hands : [hands])
+                    .flatMap(item => typeof item === 'string' ? item.split(',') : item)
+                    .map(h => h.trim())
+                    .filter(Boolean);
+
+                handList.forEach(hand => {
+                    if (hand.length === 4) {
+                        // Exact 4-character suit combo (e.g. "AsKs", "2s2c")
+                        const cellState = comboToState[hand];
+                        if (cellState) {
+                            cellState.handMap[hand] = color;
+                        }
+                    } else {
+                        // General hand label (e.g. "AA", "AKs", "AKo")
+                        const cellState = labelToState[hand];
+                        if (cellState) {
+                            Object.keys(cellState.handMap).forEach(combo => {
+                                cellState.handMap[combo] = color;
+                            });
+                        }
+                    }
+                });
+            });
+
+            // Refresh UI visual state
+            gridState.forEach(state => updateCellVisual(state));
+            updateStats();
+
+            if (selectedCell) {
+                selectCell(selectedCell);
+            }
         }
 
         function createPalette() {
@@ -240,9 +599,22 @@
                 const btn = document.createElement('div');
                 btn.className = 'palette-btn' + (i === 0 ? ' active' : '');
                 btn.innerText = p.n;
-                btn.style.background = p.c.length === 1
-                    ? p.c[0]
-                    : `linear-gradient(to right, ${p.c[0]} 50%, ${p.c[1]} 50%)`;
+
+                if (p.c.length === 1) {
+                    btn.style.background = p.c[0];
+                } else {
+                    const stops = [];
+                    const step = 100 / p.c.length;
+
+                    p.c.forEach((color, index) => {
+                        const start = index * step;
+                        const end = (index + 1) * step;
+                        stops.push(`${color} ${start}%`, `${color} ${end}%`);
+                    });
+
+                    btn.style.background = `linear-gradient(to right, ${stops.join(', ')})`;
+                }
+
                 btn.onclick = () => {
                     currentBrush = p.c;
                     document.querySelectorAll('.palette-btn').forEach(b => b.classList.remove('active'));
@@ -260,9 +632,9 @@
                     cell.className = 'matrix-cell';
                     const label = (r < c) ? cards[r] + cards[c] + 's' : (r > c ? cards[c] + cards[r] + 'o' : cards[r] + cards[r]);
                     cell.innerText = label;
-                    const state = { label, handMap: generateHandMap(r, c), dom: cell };
-                    cell.onmousedown = () => { isDragging = true; paintCell(state); selectCell(state); };
-                    cell.onmouseenter = () => { if (isDragging) paintCell(state); };
+                    const state = {label, handMap: generateHandMap(r, c), dom: cell};
+                    cell.onmousedown = () => {isDragging = true; paintCell(state); selectCell(state);};
+                    cell.onmouseenter = () => {if (isDragging) paintCell(state);};
                     updateCellVisual(state);
                     container.appendChild(cell);
                     gridState.push(state);
@@ -278,7 +650,7 @@
             } else if (c > r) {
                 suits.forEach(s => map[`${r1}${s}${r2}${s}`] = COLORS.CLEAR);
             } else {
-                suits.forEach(s1 => suits.forEach(s2 => { if (s1 !== s2) map[`${r2}${s1}${r1}${s2}`] = COLORS.CLEAR; }));
+                suits.forEach(s1 => suits.forEach(s2 => {if (s1 !== s2) map[`${r2}${s1}${r1}${s2}`] = COLORS.CLEAR;}));
             }
             return map;
         }
@@ -294,13 +666,18 @@
         }
 
         function updateCellVisual(state) {
+            const hideFold = document.getElementById('hideFoldCheckbox')?.checked;
             const vals = Object.values(state.handMap);
-            let stops = vals.map((c, i) => `${c} ${(i / vals.length) * 100}% ${((i + 1) / vals.length) * 100}%`);
+            // Convert FOLD colors to CLEAR when "Hide Fold Range" is checked
+            let stops = vals.map((c, i) => {
+                const renderColor = (hideFold && c === COLORS.FOLD) ? COLORS.CLEAR : c;
+                return `${renderColor} ${(i / vals.length) * 100}% ${((i + 1) / vals.length) * 100}%`;
+            });
             state.dom.style.background = `linear-gradient(to right, ${stops.join(',')})`;
         }
 
         function formatSuit(hand) {
-            const symbol = { s: '♠', c: '♣', h: '♥', d: '♦' };
+            const symbol = {s: '♠', c: '♣', h: '♥', d: '♦'};
             return hand.replace(/([schd])/g, (m) => `<span class="suit-${m}">${symbol[m]}</span>`);
         }
 
@@ -352,9 +729,13 @@
             });
         }
 
+        function updateAllVisuals() {
+            gridState.forEach(state => updateCellVisual(state));
+        }
+
         function updateStats() {
-            const counts = { [COLORS.RAISE]: 0, [COLORS.CALL]: 0, [COLORS.FOLD]: 0, [COLORS.ALLIN]: 0 };
-            gridState.forEach(s => Object.values(s.handMap).forEach(v => { if (counts[v] !== undefined) counts[v]++; }));
+            const counts = {[COLORS.RAISE]: 0, [COLORS.CALL]: 0, [COLORS.FOLD]: 0, [COLORS.ALLIN]: 0};
+            gridState.forEach(s => Object.values(s.handMap).forEach(v => {if (counts[v] !== undefined) counts[v]++;}));
             const set = (id, color, name) => {
                 const el = document.getElementById(id);
                 el.style.backgroundColor = color;
@@ -368,7 +749,7 @@
 
         function copyAction(color, name) {
             let combos = [];
-            gridState.forEach(s => Object.entries(s.handMap).forEach(([k, v]) => { if (v === color) combos.push(k); }));
+            gridState.forEach(s => Object.entries(s.handMap).forEach(([k, v]) => {if (v === color) combos.push(k);}));
             navigator.clipboard.writeText(combos.join(',') || 'None');
             const t = document.getElementById('toast');
             t.innerText = `Copied ${name}`; t.style.display = 'block';
