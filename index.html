@@ -283,9 +283,13 @@
             <div class="stat-box" id="allinStat" onclick="copyAction(COLORS.ALLIN, 'All-In')"></div>
         </div>
 
-        <div style="margin-top: 15px; font-size: 14px; font-weight: bold;">
+        <div
+            style="margin-top: 15px; font-size: 14px; font-weight: bold; display: flex; flex-direction: column; gap: 6px;">
             <label style="cursor: pointer; user-select: none;">
                 <input type="checkbox" id="hideFoldCheckbox" onchange="updateAllVisuals()"> Hide Fold Range
+            </label>
+            <label style="cursor: pointer; user-select: none;">
+                <input type="checkbox" id="convertToGlobalCheckbox"> Convert to Global Frequencies
             </label>
         </div>
     </div>
@@ -302,6 +306,7 @@
         };
 
         const PALETTES = [
+            {n: "Select", c: null},
             {n: "Raise", c: [COLORS.RAISE]},
             {n: "Call", c: [COLORS.CALL]},
             {n: "Fold", c: [COLORS.FOLD]},
@@ -311,15 +316,7 @@
             {n: "50C/50F", c: [COLORS.CALL, COLORS.FOLD]},
             {n: "25R/Clear", c: [COLORS.RAISE, COLORS.CLEAR, COLORS.CLEAR, COLORS.CLEAR]}
         ];
-        // Supported formats
-        // 1. Pasted string directly from clipboard
-        // [COLORS.RAISE]: "AsKs,AcKc,AhKh,2s2c,AA,KK"
 
-        // 2. Pasted string inside an array
-        // [COLORS.RAISE]: ["AsKs,AcKc,AhKh,2s2c", "QQ", "JJ"]
-
-        // 3. Array of individual items
-        // [COLORS.RAISE]: ["AsKs", "AcKc", "AA", "AKs"]
         const PRESETS = [
             {
                 name: "UTG Open",
@@ -337,7 +334,7 @@
                 name: "UTG vs IP",
                 category: "UTG",
                 actions: {
-                    [COLORS.ALLIN]:[
+                    [COLORS.ALLIN]: [
                         "AsKc,AsKh,AsKd,AcKs,AcKh,AcKd,KsKc,KsKh,KsKd"
                     ],
                     [COLORS.RAISE]: [
@@ -349,23 +346,15 @@
                     [COLORS.FOLD]: [
                         "As9s,Ac9c,Ah9h,Ad9d,As8s,Ac8c,Ah8h,Ad8d,As7s,Ac7c,Ah7h,Ad7d,As6s,Ac6c,Ah6h,Ad6d,Ah4h,Ad4d,As3s,Ac3c,Ah3h,Ad3d,As2s,Ac2c,Ah2h,Ad2d,KhTh,KdTd,Ks9s,Kc9c,Kh9h,Kd9d,Ks8s,Kc8c,Kh8h,Kd8d,Ks7s,Kc7c,Kh7h,Kd7d,AcQs,AcQh,AcQd,AhQs,AhQc,AhQd,AdQs,AdQc,AdQh,KsQc,KsQh,KsQd,KcQs,KcQh,KcQd,KhQs,KhQc,KhQd,KdQs,KdQc,KdQh,QhJh,QdJd,QsTs,QcTc,QhTh,QdTd,Qs9s,Qc9c,Qh9h,Qd9d,AsJc,AsJh,AsJd,AcJs,AcJh,AcJd,AhJs,AhJc,AhJd,AdJs,AdJc,AdJh,Js9s,Jc9c,Jh9h,Jd9d,Tc9c,Th9h,Td9d,Ts8s,Tc8c,Th8h,Td8d,9c9d,9h9d,8c8h,8c8d,8h8d,7c7h,7c7d,7h7d,6c6h,6c6d,6h6d,5c5h,5c5d,5h5d"
                     ]
-
                 }
             },
             {
                 name: "UTG vs OOP",
                 category: "UTG",
                 actions: {
-                    [COLORS.RAISE]: [
-                        
-                    ],
-                    [COLORS.CALL]: [
-                        
-                    ],
-                    [COLORS.FOLD]: [
-                        
-                    ]
-
+                    [COLORS.RAISE]: [],
+                    [COLORS.CALL]: [],
+                    [COLORS.FOLD]: []
                 }
             },
             {
@@ -533,7 +522,6 @@
                     const btn = document.createElement('button');
                     btn.className = 'preset-btn';
 
-                    // Automatically compute raise frequency for the tag
                     const raisePct = getRaisePercentage(preset);
                     btn.innerHTML = `<span>${preset.name}</span> <span class="preset-tag">(${raisePct})</span>`;
                     btn.onclick = () => {
@@ -552,7 +540,6 @@
             const raiseActions = preset.actions[COLORS.RAISE];
             if (!raiseActions) return '0.0%';
 
-            // Normalize array or comma-separated string formats into unique hand tokens
             const handList = (Array.isArray(raiseActions) ? raiseActions : [raiseActions])
                 .flatMap(item => typeof item === 'string' ? item.split(',') : item)
                 .map(h => h.trim())
@@ -563,12 +550,12 @@
 
             uniqueHands.forEach(hand => {
                 if (hand.length === 4) {
-                    comboCount += 1;  // Single suit combination (e.g. "AsKs", "2s2c")
+                    comboCount += 1;
                 } else if (hand.length === 2) {
-                    comboCount += 6;  // Pocket pair (e.g. "AA")
+                    comboCount += 6;
                 } else if (hand.length === 3) {
-                    if (hand.endsWith('s')) comboCount += 4;   // Suited hand (e.g. "AKs")
-                    if (hand.endsWith('o')) comboCount += 12;  // Offsuit hand (e.g. "AKo")
+                    if (hand.endsWith('s')) comboCount += 4;
+                    if (hand.endsWith('o')) comboCount += 12;
                 }
             });
 
@@ -576,14 +563,12 @@
         }
 
         function applyPreset(preset) {
-            // Reset all cells to CLEAR color
             gridState.forEach(state => {
                 Object.keys(state.handMap).forEach(combo => {
                     state.handMap[combo] = COLORS.CLEAR;
                 });
             });
 
-            // Create fast lookup maps for performance
             const comboToState = {};
             const labelToState = {};
             gridState.forEach(s => {
@@ -591,11 +576,9 @@
                 Object.keys(s.handMap).forEach(k => comboToState[k] = s);
             });
 
-            // Apply target preset colors
             Object.entries(preset.actions).forEach(([color, hands]) => {
                 if (!hands) return;
 
-                // Parse strings or arrays, splitting comma-separated items
                 const handList = (Array.isArray(hands) ? hands : [hands])
                     .flatMap(item => typeof item === 'string' ? item.split(',') : item)
                     .map(h => h.trim())
@@ -603,13 +586,11 @@
 
                 handList.forEach(hand => {
                     if (hand.length === 4) {
-                        // Exact 4-character suit combo (e.g. "AsKs", "2s2c")
                         const cellState = comboToState[hand];
                         if (cellState) {
                             cellState.handMap[hand] = color;
                         }
                     } else {
-                        // General hand label (e.g. "AA", "AKs", "AKo")
                         const cellState = labelToState[hand];
                         if (cellState) {
                             Object.keys(cellState.handMap).forEach(combo => {
@@ -620,7 +601,6 @@
                 });
             });
 
-            // Refresh UI visual state
             gridState.forEach(state => updateCellVisual(state));
             updateStats();
 
@@ -636,7 +616,9 @@
                 btn.className = 'palette-btn' + (i === 0 ? ' active' : '');
                 btn.innerText = p.n;
 
-                if (p.c.length === 1) {
+                if (!p.c) {
+                    btn.style.background = '#fff';
+                } else if (p.c.length === 1) {
                     btn.style.background = p.c[0];
                 } else {
                     const stops = [];
@@ -692,6 +674,8 @@
         }
 
         function paintCell(state) {
+            if (!currentBrush) return;
+
             const keys = Object.keys(state.handMap);
             keys.forEach((k, i) => {
                 state.handMap[k] = currentBrush[Math.floor((i / keys.length) * currentBrush.length)];
@@ -704,7 +688,6 @@
         function updateCellVisual(state) {
             const hideFold = document.getElementById('hideFoldCheckbox')?.checked;
             const vals = Object.values(state.handMap);
-            // Convert FOLD colors to CLEAR when "Hide Fold Range" is checked
             let stops = vals.map((c, i) => {
                 const renderColor = (hideFold && c === COLORS.FOLD) ? COLORS.CLEAR : c;
                 return `${renderColor} ${(i / vals.length) * 100}% ${((i + 1) / vals.length) * 100}%`;
@@ -784,9 +767,30 @@
         }
 
         function copyAction(color, name) {
-            let combos = [];
-            gridState.forEach(s => Object.entries(s.handMap).forEach(([k, v]) => {if (v === color) combos.push(k);}));
-            navigator.clipboard.writeText(combos.join(',') || 'None');
+            const isGlobal = document.getElementById('convertToGlobalCheckbox')?.checked;
+            let handWeights = [];
+
+            gridState.forEach(state => {
+                const combos = Object.entries(state.handMap);
+                const matchingCombos = combos.filter(([_, v]) => v === color);
+
+                if (matchingCombos.length > 0) {
+                    if (isGlobal) {
+                        // Simplified hand format with global frequency weight (e.g. AKs:0.25)
+                        const weight = (matchingCombos.length / combos.length).toFixed(2);
+                        handWeights.push(`${state.label}:${weight}`);
+                    } else {
+                        // Specific combo format weighted at 100% (e.g. AsKs:1)
+                        matchingCombos.forEach(([combo]) => {
+                            handWeights.push(`${combo}:1`);
+                        });
+                    }
+                }
+            });
+
+            const copyText = handWeights.join(',') || 'None';
+
+            navigator.clipboard.writeText(copyText);
             const t = document.getElementById('toast');
             t.innerText = `Copied ${name}`; t.style.display = 'block';
             setTimeout(() => t.style.display = 'none', 1000);
