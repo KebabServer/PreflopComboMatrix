@@ -550,7 +550,7 @@
 
                         // Exclude hand if it shares cards with the board
                         const handStr = cardOrder[idx];
-                        if (handOverlapsBoard(handStr, currentBoard)) return null;
+                        if (handOverlapsBoard(handStr, getRowData(randomRow, "Board"))) return null;
 
                         return idx;
                     })
