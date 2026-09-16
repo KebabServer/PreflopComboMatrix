@@ -95,6 +95,8 @@
 </head>
 
 <body>
+     <div id="header-container"></div>
+    
     <div class="container">
         <div><input type="file" id="fileInput" accept=".csv"></div>
         <div class="button-group" id="group1">
@@ -177,6 +179,18 @@
 
 
     <div id="tooltip"></div>
+
+    <script>
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+            })
+            .catch(error => {
+                console.error('Virhe ladattaessa headeria:', error);
+            });
+    </script>
+    
     <script>
         document.getElementById('fileInput').addEventListener('change', handleFileSelect, false);
         const canvasHeight = 100;
