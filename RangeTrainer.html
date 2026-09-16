@@ -20,17 +20,13 @@
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-            background: radial-gradient(circle, #353a44 0%, var(--bg-dark) 100%);
-            color: var(--text-white);
-            text-align: center;
-            margin: 0;
-            padding: 0 20px 20px 20px;
-            /* Changed top padding from 20px to 0 */
-            user-select: none;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            flex-direction: column; /* Vaihdettu pylvässuunnaksi, jotta yläpalkki on ylimpänä */
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            user-select: none;
             min-height: 100vh;
         }
 
