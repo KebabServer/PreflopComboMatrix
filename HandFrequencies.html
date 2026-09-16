@@ -9,11 +9,13 @@
      font-family: 'Inter', sans-serif;
      background-color: #0f172a;
      color: #e2e8f0;
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     min-height: 100vh;
-     padding: 1rem;
+    display: flex;
+           flex-direction: column; /* Vaihdettu pylvässuunnaksi, jotta yläpalkki on ylimpänä */
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            min-height: 100vh;
  }
 
  .app-container {
@@ -182,25 +184,26 @@
 
 <body>
     <div id="header-container"></div>
-    <div class="app-container">
-        <div class="main-matrix matrix" id="main-matrix"> </div>
+        <div class="app-container">
+            <div class="main-matrix matrix" id="main-matrix"> </div>
 
-        <div class="small-matrices-container">
-            <div class="small-matrix-wrapper">
-                <div class="matrix-title">RFI</div>
-                <div class="matrix small-matrix" id="matrix-2bet"></div>
-            </div>
-            <div class="small-matrix-wrapper">
-                <div class="matrix-title">vs Open</div>
-                <div class="matrix small-matrix" id="matrix-3bet"></div>
+            <div class="small-matrices-container">
+                <div class="small-matrix-wrapper">
+                    <div class="matrix-title">RFI</div>
+                    <div class="matrix small-matrix" id="matrix-2bet"></div>
+                </div>
+                <div class="small-matrix-wrapper">
+                    <div class="matrix-title">vs Open</div>
+                    <div class="matrix small-matrix" id="matrix-3bet"></div>
 
-            </div>
-            <div class="small-matrix-wrapper">
-                <div class="matrix-title">vs 3Bet</div>
-                <div class="matrix small-matrix" id="matrix-4bet"></div>
+                </div>
+                <div class="small-matrix-wrapper">
+                    <div class="matrix-title">vs 3Bet</div>
+                    <div class="matrix small-matrix" id="matrix-4bet"></div>
+                </div>
             </div>
         </div>
-    </div>
+
 
     <script>
         fetch('header.html')
