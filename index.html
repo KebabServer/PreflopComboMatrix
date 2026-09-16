@@ -378,21 +378,14 @@
     </div>
 
     <script>
-   const currentPage = "index"; 
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+            });
+    </script> 
 
-    fetch('header.html')
-        .then(response => response.text())
-        .then(data => {
-            const container = document.getElementById('header-container');
-            container.innerHTML = data;
 
-            // Etsitään oikea linkki data-page-attribuutin perusteella ja aktivoidaan se
-            const activeLink = container.querySelector(`[data-page="${currentPage}"]`);
-            if (activeLink) {
-                activeLink.classList.add("active");
-            }
-        });
-    </script>
 
     <script>
         const cards = "AKQJT98765432";
