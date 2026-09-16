@@ -12,6 +12,8 @@
         width: 100%;
         box-sizing: border-box; /* Ensures padding doesn't increase width beyond 100% */
         margin: 0;
+        display: flex;
+        justify-content: center;
     }
 
     /* Layout for horizontal list */
@@ -20,7 +22,6 @@
         margin: 0;
         padding: 0;
         display: flex;
-        justify-content: center;
         align-items: center;
         gap: 20px; /* Space between links */
     }
@@ -59,15 +60,32 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Get the current file name from the URL (defaults to index.html if root)
-        const currentPage = window.location.pathname.split("/").pop() || "index.html";
+        const currentPath = window.location.pathname;
 
-        // Find all links inside the header
         const navLinks = document.querySelectorAll(".header a");
 
+        // Apufunktio polkujen yhdenmukaistamiseen (käsittelee juuriosoitteet ja index.html:n oikein)
+        const normalizePath = (path) => {
+            let p = path.endsWith('/') ? path + 'index.html' : path;
+            if (p === '' || p === '/') {
+                return '/index.html';
+            }
+            // Varmistetaan, että päättyy index.html:ään jos kyseessä on hakemisto ilman tiedostonimeä
+            if (!p.endsWith('.html') && !p.endsWith('.htm')) {
+                p = p.endsWith('/') ? p + 'index.html' : p + '/index.html';
+            }
+            return p;
+        };
+
         navLinks.forEach(link => {
-            // Check if the link matches the current page
-            if (link.getAttribute("href") === currentPage) {
+            // Haetaan linkin absoluuttinen polku
+            const linkPath = new URL(link.getAttribute("href"), window.location.origin).pathname;
+
+            // Verrataan normalisoituja polkuja toisiinsa (ottaen huomioon tiedostonimen tai päätteen)
+            const normalizedCurrent = currentPath.split('/').pop() || 'index.html';
+            const normalizedLink = link.getAttribute("href");
+
+            if (normalizedCurrent === normalizedLink) {
                 link.classList.add("active");
             } else {
                 link.classList.remove("active");
