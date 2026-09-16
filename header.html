@@ -1,52 +1,52 @@
-<!DOCTYPE html>
-<html lang="fi">
-<head>
-    <meta charset="UTF-8">
-    <title>Header Esimerkki</title>
-    <style>
-        /* Koko yläpalkin tyyli */
-        .yla-palkki {
-            background-color: #2c3e50; /* Tummansininen taustaväri */
-            padding: 15px 30px;
-            width: 100%;
-            box-sizing: border-box;
-        }
+<style>
+    /* Nollataan sivuston yleiset marginaalit, jos niitä ei ole tehty muualla */
+    body {
+        margin: 0;
+        padding: 0;
+    }
 
-        /* Listan asettelu vierekkäin */
-        .yla-palkki ul {
-            list-style-type: none; /* Poistaa listan oletuspallukat */
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: flex-end; /* Siirtää valikon oikeaan reunaan */
-            align-items: center;
-            gap: 20px; /* Väli linkkien välillä */
-        }
+    /* Koko yläpalkin tyyli - pakotetaan täyteen leveyteen */
+    .yla-palkki {
+        background-color: #2c3e50; /* Tummansininen taustaväri */
+        padding: 15px 30px;
+        width: 100%;
+        box-sizing: border-box; /* Varmistaa, että padding ei kasvata leveyttä yli 100%:n */
+        margin: 0;
+    }
 
-        /* Linkkien tyylit */
-        .yla-palkki a {
-            color: #ffffff; /* Valkoinen tekstin väri */
-            text-decoration: none; /* Poistaa alleviivauksen */
-            font-family: Arial, sans-serif;
-            font-size: 16px;
-            padding: 10px 15px;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
-        }
+    /* Listan asettelu vierekkäin */
+    .yla-palkki ul {
+        list-style-type: none; /* Poistaa listan oletuspallukat */
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: flex-end; /* Siirtää valikon oikeaan reunaan */
+        align-items: center;
+        gap: 20px; /* Väli linkkien välillä */
+    }
 
-        /* Hiiren vieminen linkin päälle (hover) */
-        .yla-palkki a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
+    /* Linkkien tyylit */
+    .yla-palkki a {
+        color: #ffffff; /* Valkoinen tekstin väri */
+        text-decoration: none; /* Poistaa alleviivauksen */
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        padding: 10px 15px;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
 
-        /* Aktiivisen sivun nappi */
-        .yla-palkki a.aktiivinen {
-            background-color: #3498db; /* Kirkkaampi sininen tausta */
-            color: #ffffff;
-        }
-    </style>
-</head>
-<body>
+    /* Hiiren vieminen linkin päälle (hover) */
+    .yla-palkki a:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Aktiivisen sivun nappi */
+    .yla-palkki a.aktiivinen {
+        background-color: #3498db; /* Kirkkaampi sininen tausta */
+        color: #ffffff;
+    }
+</style>
 
 <nav class="yla-palkki">
     <ul>
@@ -56,6 +56,3 @@
         <li><a href="yhteystiedot.html">Yhteystiedot</a></li>
     </ul>
 </nav>
-
-</body>
-</html>
