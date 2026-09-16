@@ -248,7 +248,7 @@
 
         function fetchTSVFile() {
             const timestamp = new Date().getTime(); // Unique query parameter
-            fetch(`.Preflop/Preflop.tsv`)
+            fetch(`/Preflop/Preflop.tsv`)
                 .then(response => {
                     if (!response.ok) {
                         printText('No connection.');
