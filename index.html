@@ -383,14 +383,6 @@
         .then(data => {
             document.getElementById('header-container').innerHTML = data;
         });
-
-        const scripts = container.querySelectorAll("script");
-            scripts.forEach(oldScript => {
-                const newScript = document.createElement("script");
-                newScript.textContent = oldScript.textContent;
-                document.body.appendChild(newScript);
-                document.body.removeChild(newScript); // Siivotaan pois ajon jälkeen
-            });
     </script>
 
     <script>
