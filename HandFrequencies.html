@@ -239,7 +239,7 @@
 
         function fetchTSVFile() {
             const timestamp = new Date().getTime(); // Unique query parameter
-            fetch(`https://kebabserver.github.io/kebab/PreflopRanges/Preflop.tsv?ts=${timestamp}`)
+            fetch(`.Preflop/Preflop.tsv`)
                 .then(response => {
                     if (!response.ok) {
                         printText('No connection.');
