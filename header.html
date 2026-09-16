@@ -42,7 +42,7 @@
     }
 
     /* Active page button */
-    .headeri a.active {
+    .header a.active {
         background-color: #3498db; /* Brighter blue background */
         color: #ffffff;
     }
@@ -50,9 +50,28 @@
 
 <nav class="header">
     <ul>
-        <li><a href="index.html" class="active">Preflop</a></li>
+        <li><a href="index.html">Preflop</a></li>
         <li><a href="palvelut.html">Services</a></li>
         <li><a href="tietoa.html">About Us</a></li>
         <li><a href="yhteystiedot.html">Contact</a></li>
     </ul>
 </nav>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get the current file name from the URL (defaults to index.html if root)
+        const currentPage = window.location.pathname.split("/").pop() || "index.html";
+
+        // Find all links inside the header
+        const navLinks = document.querySelectorAll(".header a");
+
+        navLinks.forEach(link => {
+            // Check if the link matches the current page
+            if (link.getAttribute("href") === currentPage) {
+                link.classList.add("active");
+            } else {
+                link.classList.remove("active");
+            }
+        });
+    });
+</script>
