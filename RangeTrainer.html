@@ -138,6 +138,7 @@
 </head>
 
 <body>
+  <div id="header-container"></div>
   <div id="quiz_question"> </div>
   <canvas id="pokerTable" width="568" height="480"></canvas>
   <div id="buttons">
@@ -158,6 +159,16 @@
     <label class="optionsLabel"><input type="checkbox" id="VS3BET_Checkbox"> Facing 3Bet</label>
     <label class="optionsLabel"><input type="checkbox" id="SRP_Checkbox" checked> SRP</label>
   </div>
+   
+
+
+    <script>
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+            })
+    </script>
 
   <script>
     const ranks = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
