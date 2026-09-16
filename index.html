@@ -24,7 +24,7 @@
 
     <header>
         <nav>
-            <button class="tab-btn active" onclick="loadSubPage('Preflop.html', this)">Preflop</button>
+            <button class="tab-btn active" onclick="loadSubPage('preflop.html', this)">Etusivu</button>
         </nav>
     </header>
 
@@ -34,25 +34,47 @@
     </main>
 
     <script>
-        async function loadSubPage(page, button) {
+        async function loadSubPage(sivu, nappi) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            button.classList.add('active');
+            nappi.classList.add('active');
 
             const alue = document.getElementById('sisalto-alue');
 
-            if (page === 'etusivu') {
+            if (sivu === 'etusivu') {
                 alue.innerHTML = `<h2>Tervetuloa</h2><p>Tämä on etusivun oletussisältö.</p>`;
                 return;
             }
 
             try {
-                const vastaus = await fetch(page);
+                const vastaus = await fetch(sivu);
                 if (!vastaus.ok) throw new Error();
-                alue.innerHTML = await vastaus.text();
+                const htmlTeksti = await vastaus.text();
+                
+                // 1. Asetetaan HTML sivuun
+                alue.innerHTML = htmlTeksti;
+
+                // 2. Etsitään ja suoritetaan mahdolliset skriptit ladatusta sisällöstä
+                const skriptit = alue.querySelectorAll('script');
+                skriptit.forEach(vanhaSkripti => {
+                    const uusiSkripti = document.createElement('script');
+                    
+                    // Kopioidaan mahdolliset attribuutit (esim. src)
+                    Array.from(vanhaSkripti.attributes).forEach(attr => {
+                        uusiSkripti.setAttribute(attr.name, attr.value);
+                    });
+                    
+                    // Kopioidaan skriptin sisällä oleva koodi
+                    uusiSkripti.appendChild(document.createTextNode(vanhaSkripti.innerHTML));
+                    
+                    // Vaihdetaan vanha skripti uuteen, jolloin selaimen on suoritettava se
+                    vanhaSkripti.parentNode.replaceChild(uusiSkripti, vanhaSkripti);
+                });
+
             } catch {
                 alue.innerHTML = `<h2>Virhe</h2><p>Sivua ei voitu ladata.</p>`;
             }
         }
+    </script>
     </script>
 </body>
 </html>
