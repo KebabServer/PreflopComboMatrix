@@ -181,6 +181,7 @@
 </head>
 
 <body>
+    <div id="header-container"></div>
     <div class="app-container">
         <div class="main-matrix matrix" id="main-matrix"> </div>
 
@@ -200,6 +201,14 @@
             </div>
         </div>
     </div>
+
+    <script>
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+            })
+    </script>
     <script>
         // A list of card ranks, used to generate the hand matrix
         const ranks = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
