@@ -310,6 +310,8 @@
 </head>
 
 <body>
+    <div id="header-container"></div>
+    
     <div class="sidebar">
         <div class="sidebar-header">
             <span>Range Manager</span>
@@ -354,6 +356,14 @@
             </label>
         </div>
     </div>
+
+    <script>
+    fetch('header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('header-container').innerHTML = data;
+        });
+    </script>
 
     <script>
         const cards = "AKQJT98765432";
