@@ -1,16 +1,16 @@
 <style>
-    /* Reset general site margins if not done elsewhere */
+    /* Reset general site margins */
     body {
         margin: 0;
         padding: 0;
     }
 
-    /* Entire top bar style - forces full width */
+    /* Entire top bar style */
     .header {
-        background-color: #2c3e50; /* Dark blue background color */
+        background-color: #2c3e50;
         padding: 15px 30px;
         width: 100%;
-        box-sizing: border-box; /* Ensures padding doesn't increase width beyond 100% */
+        box-sizing: border-box;
         margin: 0;
         display: flex;
         justify-content: center;
@@ -18,18 +18,18 @@
 
     /* Layout for horizontal list */
     .header ul {
-        list-style-type: none; /* Removes default list bullets */
+        list-style-type: none;
         margin: 0;
         padding: 0;
         display: flex;
         align-items: center;
-        gap: 20px; /* Space between links */
+        gap: 20px;
     }
 
     /* Link styles */
     .header a {
-        color: #ffffff; /* White text color */
-        text-decoration: none; /* Removes underline */
+        color: #ffffff;
+        text-decoration: none;
         font-family: Arial, sans-serif;
         font-size: 16px;
         padding: 10px 15px;
@@ -44,7 +44,7 @@
 
     /* Active page button */
     .header a.active {
-        background-color: #3498db; /* Brighter blue background */
+        background-color: #3498db;
         color: #ffffff;
     }
 </style>
@@ -60,27 +60,24 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Haetaan koko nykyinen URL pienillä kirjaimilla vertailun helpottamiseksi
-        const currentUrl = window.location.href.toLowerCase();
+        // Luetaan nykyisen sivun polku (esim. /palvelut.html tai /)
+        const currentPath = window.location.pathname.toLowerCase();
         const navLinks = document.querySelectorAll(".header a");
 
         navLinks.forEach(link => {
             const href = link.getAttribute("href").toLowerCase();
-            
-            // Tarkistetaanko täsmääkö URL suoraan linkin href-attribuuttiin (esim. palvelut.html)
-            let isMatch = currentUrl.endsWith("/" + href) || currentUrl.endsWith(href);
+            console.log(href);
 
-            // Erikoistapaus etusivulle: jos osoite päättyy pelkkään kauttamerkkiin (/) tai kansioon, oletetaan se etusivuksi
-            if (href === "index.html" && (currentUrl.endsWith("/") || currentUrl.endsWith("index.html"))) {
-                isMatch = true;
-            } else if (href === "index.html" && !currentUrl.includes(".html")) {
-                isMatch = true;
-            }
+            // Poistetaan active-luokka varmuuden vuoksi aluksi
+            link.classList.remove("active");
 
-            if (isMatch) {
+            // Tarkistetaan täsmääkö polun loppuosa linkkiin
+            if (currentPath.endsWith(href)) {
                 link.classList.add("active");
-            } else {
-                link.classList.remove("active");
+            } 
+            // Etusivun erikoistapaukset (sivusto avattu juuresta "/" tai tyhjänä)
+            else if (href === "index.html" && (currentPath === "/" || currentPath.endsWith("/index.html") || currentPath === "")) {
+                link.classList.add("active");
             }
         });
     });
