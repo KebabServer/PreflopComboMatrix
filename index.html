@@ -376,26 +376,6 @@
             </div>
         </div>
     </div>
-
-    <script>
-        fetch('header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('header-container').innerHTML = data;
-                container.innerHTML = data;
-
-                const scripts = container.querySelectorAll("script");
-                scripts.forEach(oldScript => {
-                const newScript = document.createElement("script");
-                newScript.textContent = oldScript.textContent;
-                document.body.appendChild(newScript);
-                document.body.removeChild(newScript);
-            });
-            });
-    </script> 
-
-
-
     <script>
         const cards = "AKQJT98765432";
         const suits = ['s', 'c', 'h', 'd'];
