@@ -21,17 +21,13 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            flex-direction: column; /* Vaihdettu pylvässuunnaksi, jotta yläpalkki on ylimpänä */
             background-color: var(--bg-color);
             margin: 0;
             padding: 0;
             user-select: none;
             min-height: 100vh;
-        }
-
-        .page-content {
-            display: flex;
-            flex-direction: column;
-            min-height: calc(100vh - 60px); /* Adjust based on header height */
         }
 
         #header-container {
@@ -338,7 +334,7 @@
     <div id="header-container"></div>
     
     <!-- Kääre, joka pitää sivupalkin ja sisällön vierekkäin -->
-   <main class="page-content">
+    <div class="layout-container">
         <div class="sidebar">
             <div class="sidebar-header">
                 <span>Range Manager</span>
