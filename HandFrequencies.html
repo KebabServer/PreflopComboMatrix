@@ -251,10 +251,9 @@
 
         function fetchTSVFile() {
             const timestamp = new Date().getTime(); // Unique query parameter
-            fetch(`/Preflop/Preflop.tsv`)
+            fetch(`Preflop/Preflop.tsv`)
                 .then(response => {
                     if (!response.ok) {
-                        printText('No connection.');
                         throw new Error('Network response was not ok');
                     }
                     return response.text();
@@ -264,7 +263,6 @@
                     headers = rows[0];
                 })
                 .catch(error => {
-                    printText('Error fetching range files.');
                     console.error('Error fetching TSV file:', error);
                 });
         }
