@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,7 +25,7 @@
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
-            align-items: flex-start;
+            flex-direction: column; /* Vaihdettu pylvässuunnaksi, jotta yläpalkki on ylimpänä */
             background-color: var(--bg-color);
             margin: 0;
             padding: 0;
@@ -30,10 +33,23 @@
             min-height: 100vh;
         }
 
+        #header-container {
+            width: 100%;
+        }
+
+        /* Luodaan uusi kääre, joka pitää sivupalkin ja pääsisällön vierekkäin yläpalkin alapuolella */
+        .layout-container {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            width: 100%;
+            flex-grow: 1;
+        }
+
         /* --- Sidebar Styles --- */
         .sidebar {
             width: 260px;
-            height: 100vh;
+            height: calc(100vh - 60px); /* Vähennetään yläpalkin korkeus tarvittaessa, tai pidetään 100vh */
             background-color: var(--bg-sidebar);
             border-right: 1px solid #ccc;
             display: flex;
@@ -41,6 +57,8 @@
             overflow-y: auto;
             box-sizing: border-box;
             flex-shrink: 0;
+            position: sticky;
+            top: 0;
         }
 
         .sidebar-header {
@@ -122,6 +140,7 @@
         .main-content {
             padding: 15px;
             flex-grow: 1;
+            box-sizing: border-box;
         }
 
         .palette-panel {
@@ -155,8 +174,6 @@
             max-width: 1400px;
             width: 100%;
         }
-
-
 
         .matrix-panel {
             display: grid;
@@ -310,50 +327,53 @@
 </head>
 
 <body>
+    <!-- Yläpalkki latautuu tähän -->
     <div id="header-container"></div>
     
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <span>Range Manager</span>
-            <select class="range-select" id="rangeSelect" onchange="switchRange(this.value)"></select>
-        </div>
-
-        <div class="positions-container" id="sidebarContent"></div>
-    </div>
-
-    <div class="main-content">
-        <div class="tooltip" id="toast">Copied!</div>
-
-        <div class="palette-panel" id="palettePanel"></div>
-
-        <div class="main-container">
-            <div class="matrix-panel" id="matrixPanel"></div>
-            <div class="detail-panel">
-                <h3 id="detailTitle" style="margin:0 0 8px 0; font-size: 16px;">Details</h3>
-                <div id="bulkContainer" class="bulk-section"></div>
-                <div id="comboContainer"></div>
+    <!-- Kääre, joka pitää sivupalkin ja sisällön vierekkäin -->
+    <div class="layout-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <span>Range Manager</span>
+                <select class="range-select" id="rangeSelect" onchange="switchRange(this.value)"></select>
             </div>
-            <div class="note-panel" id="notePanel">
-                <div class="note-title">Notes</div>
-                <div id="noteContent" style="white-space: pre-line; color: #666;">No preset selected.</div>
+
+            <div class="positions-container" id="sidebarContent"></div>
+        </div>
+
+        <div class="main-content">
+            <div class="tooltip" id="toast">Copied!</div>
+
+            <div class="palette-panel" id="palettePanel"></div>
+
+            <div class="main-container">
+                <div class="matrix-panel" id="matrixPanel"></div>
+                <div class="detail-panel">
+                    <h3 id="detailTitle" style="margin:0 0 8px 0; font-size: 16px;">Details</h3>
+                    <div id="bulkContainer" class="bulk-section"></div>
+                    <div id="comboContainer"></div>
+                </div>
+                <div class="note-panel" id="notePanel">
+                    <div class="note-title">Notes</div>
+                    <div id="noteContent" style="white-space: pre-line; color: #666;">No preset selected.</div>
+                </div>
             </div>
-        </div>
 
-        <div class="bottom-panel">
-            <div class="stat-box" id="allinStat" onclick="copyAction(COLORS.ALLIN, 'All-In')"></div>
-            <div class="stat-box" id="raiseStat" onclick="copyAction(COLORS.RAISE, 'Raise')"></div>
-            <div class="stat-box" id="callStat" onclick="copyAction(COLORS.CALL, 'Call')"></div>
-            <div class="stat-box" id="foldStat" onclick="copyAction(COLORS.FOLD, 'Fold')"></div>
-        </div>
+            <div class="bottom-panel">
+                <div class="stat-box" id="allinStat" onclick="copyAction(COLORS.ALLIN, 'All-In')"></div>
+                <div class="stat-box" id="raiseStat" onclick="copyAction(COLORS.RAISE, 'Raise')"></div>
+                <div class="stat-box" id="callStat" onclick="copyAction(COLORS.CALL, 'Call')"></div>
+                <div class="stat-box" id="foldStat" onclick="copyAction(COLORS.FOLD, 'Fold')"></div>
+            </div>
 
-        <div
-            style="margin-top: 15px; font-size: 14px; font-weight: bold; display: flex; flex-direction: column; gap: 6px;">
-            <label style="cursor: pointer; user-select: none;">
-                <input type="checkbox" id="hideFoldCheckbox" onchange="updateAllVisuals()"> Hide Fold Range
-            </label>
-            <label style="cursor: pointer; user-select: none;">
-                <input type="checkbox" id="convertToGlobalCheckbox"> Convert to Global Frequencies
-            </label>
+            <div style="margin-top: 15px; font-size: 14px; font-weight: bold; display: flex; flex-direction: column; gap: 6px;">
+                <label style="cursor: pointer; user-select: none;">
+                    <input type="checkbox" id="hideFoldCheckbox" onchange="updateAllVisuals()"> Hide Fold Range
+                </label>
+                <label style="cursor: pointer; user-select: none;">
+                    <input type="checkbox" id="convertToGlobalCheckbox"> Convert to Global Frequencies
+                </label>
+            </div>
         </div>
     </div>
 
