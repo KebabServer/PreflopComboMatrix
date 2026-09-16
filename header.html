@@ -60,32 +60,24 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const currentPath = window.location.pathname;
-
+        // Haetaan koko nykyinen URL pienillä kirjaimilla vertailun helpottamiseksi
+        const currentUrl = window.location.href.toLowerCase();
         const navLinks = document.querySelectorAll(".header a");
 
-        // Apufunktio polkujen yhdenmukaistamiseen (käsittelee juuriosoitteet ja index.html:n oikein)
-        const normalizePath = (path) => {
-            let p = path.endsWith('/') ? path + 'index.html' : path;
-            if (p === '' || p === '/') {
-                return '/index.html';
-            }
-            // Varmistetaan, että päättyy index.html:ään jos kyseessä on hakemisto ilman tiedostonimeä
-            if (!p.endsWith('.html') && !p.endsWith('.htm')) {
-                p = p.endsWith('/') ? p + 'index.html' : p + '/index.html';
-            }
-            return p;
-        };
-
         navLinks.forEach(link => {
-            // Haetaan linkin absoluuttinen polku
-            const linkPath = new URL(link.getAttribute("href"), window.location.origin).pathname;
+            const href = link.getAttribute("href").toLowerCase();
+            
+            // Tarkistetaanko täsmääkö URL suoraan linkin href-attribuuttiin (esim. palvelut.html)
+            let isMatch = currentUrl.endsWith("/" + href) || currentUrl.endsWith(href);
 
-            // Verrataan normalisoituja polkuja toisiinsa (ottaen huomioon tiedostonimen tai päätteen)
-            const normalizedCurrent = currentPath.split('/').pop() || 'index.html';
-            const normalizedLink = link.getAttribute("href");
+            // Erikoistapaus etusivulle: jos osoite päättyy pelkkään kauttamerkkiin (/) tai kansioon, oletetaan se etusivuksi
+            if (href === "index.html" && (currentUrl.endsWith("/") || currentUrl.endsWith("index.html"))) {
+                isMatch = true;
+            } else if (href === "index.html" && !currentUrl.includes(".html")) {
+                isMatch = true;
+            }
 
-            if (normalizedCurrent === normalizedLink) {
+            if (isMatch) {
                 link.classList.add("active");
             } else {
                 link.classList.remove("active");
