@@ -5,14 +5,18 @@
     <meta charset="UTF-8" />
     <title>Hand Frequencies</title>
     <style>
-      body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: var(--bg-color);
-    margin: 0;
-    padding: 0;
-    user-select: none;
-    min-height: 100vh;
-} 
+         body {
+     font-family: 'Inter', sans-serif;
+     background-color: #0f172a;
+     color: #e2e8f0;
+    display: flex;
+           flex-direction: column;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            min-height: 100vh;
+ }
 
  .app-container {
      display: flex;
@@ -24,11 +28,6 @@
      background-color: #1f2937;
      border: 1px solid #374151;
  }
-        .page-content {
-    display: flex;
-    flex-direction: column;
-    min-height: calc(100vh - 60px); /* Adjust based on header height */
-}
 
  .matrix-container {
      display: flex;
@@ -185,7 +184,7 @@
 
 <body>
     <div id="header-container"></div>
-    <main class="page-content">
+        <div class="app-container">
             <div class="main-matrix matrix" id="main-matrix"> </div>
 
             <div class="small-matrices-container">
