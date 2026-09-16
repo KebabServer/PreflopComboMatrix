@@ -57,21 +57,3 @@
         <li><a href="yhteystiedot.html">Contact</a></li>
     </ul>
 </nav>
-
-<script>
-    (function() {
-        const currentPath = window.location.pathname.toLowerCase();
-        const navLinks = document.querySelectorAll(".header a");
-        console.log("1");
-        navLinks.forEach(link => {
-            const href = link.getAttribute("href").toLowerCase();
-            link.classList.remove("active");
-            console.log("2");
-            if (currentPath.endsWith(href)) {
-                link.classList.add("active");
-            } else if (href === "index.html" && (currentPath === "/" || currentPath.endsWith("/index.html") || currentPath === "")) {
-                link.classList.add("active");
-            }
-        });
-    })();
-</script>
