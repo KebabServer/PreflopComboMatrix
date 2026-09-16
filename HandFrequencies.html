@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hand Frequencies</title>
     <style>
         :root {
@@ -88,6 +88,7 @@
             position: relative;
             aspect-ratio: 1; /* Ensures cells stay square */
             font-size: 0.7rem;
+            min-width: 0; /* Prevents grid cells from overflowing the viewport */
         }
 
         .matrix-cell .cell-text {
@@ -105,6 +106,8 @@
         .main-matrix {
             grid-template-columns: repeat(13, 1fr);
             width: 100%;
+            max-width: 100vw;
+            box-sizing: border-box;
         }
 
         .matrix-cell.selected-red {
