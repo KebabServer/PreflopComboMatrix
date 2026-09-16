@@ -50,12 +50,6 @@
             margin-left: 10px;
         }
 
-        #fileNameDisplay {
-            color: rgb(30, 252, 196);
-            text-align: center;
-            width: 85%;
-        }
-
         .container {
             display: flex;
             justify-content: flex-start;
@@ -129,8 +123,6 @@
         </div>
     </div>
 
-
-    <h1 id="fileNameDisplay">File Name</h1>
     <div class="rowDiv">
         <h2>All Flops</h2>
         <canvas id="csvCanvas" width="1800" height="115"></canvas>
@@ -229,9 +221,6 @@
             drawCanvas(document.getElementById('csvCanvasSixSets'), parsedData, ['sixsets'], true, 10);
             drawCanvas(document.getElementById('csvCanvasThreeSets'), parsedData, ['threesets'], true, 10);
             drawCanvas(document.getElementById('csvCanvasZeroSets'), parsedData, ['zerosets'], true, 10);
-
-
-            document.getElementById('fileNameDisplay').textContent = fileName.split('-')[1].replace('.csv', '');
         }
 
         function parseCSV(csv, sortByMiddleCard) {
