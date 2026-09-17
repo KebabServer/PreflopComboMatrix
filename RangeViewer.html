@@ -3,9 +3,13 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.5">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Poker Trainer</title>
     <style>
+        #header-container {
+            width: 100%;
+        }
+
         .tooltip {
             visibility: hidden;
             width: auto;
@@ -156,12 +160,21 @@
 </head>
 
 <body>
+    <!-- Yläpalkki latautuu tähän -->
+    <div id="header-container"></div>
+
     <div id="hand-matrix"></div>
     <script>
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+            });
+    </script>
+    <script>
+
         const json = {
-            "configuration": {
-                "BTN vs BB Single Raised Pot"
-            },
+            "configuration": "BTN vs BB Single Raised Pot",
             "board": "AsJh6s",
             "ranges": {
                 "CB75": {
@@ -178,7 +191,7 @@
                 }
             }
         };
-        loadRange();
+        loadRange(json);
         const cards = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
         const suits = ['s', 'h', 'd', 'c'];
 
