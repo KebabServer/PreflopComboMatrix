@@ -156,6 +156,7 @@
 </head>
 
 <body>
+    <div id="hand-matrix"></div>
     <script>
         const cards = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
         const suits = ['s', 'h', 'd', 'c'];
@@ -246,6 +247,7 @@
         }
 
         function loadRange(data) {
+            let handmatrix = document.getElementById("hand-matrix");
             let configuration = data.configuration
             let board = data.board
 
