@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Poker Trainer</title>
     <style>
+        body {
+            background-color: #0f172a;
+        }
+
         #header-container {
             width: 100%;
         }
@@ -61,7 +65,7 @@
         }
 
         #range-viewer {
-            background-color: #0f172a;
+
             padding: 5px 5px 5px 5px;
         }
 
@@ -157,14 +161,23 @@
             border: 2px solid white;
         }
 
-        .hand-class-div {
+        .hand-classes-div {
             display: grid;
             grid-template-columns: 1fr 1fr;
             grid-template-rows: repeat(13, 1fr);
             width: 100%;
         }
-        .range-div{
+
+        .range-div {
             display: none;
+        }
+
+        .hand-class-div {
+            text-align: center;
+            color: black;
+            font-weight: bold;
+            font-size: 0.8rem;
+            border: 1px solid black;
         }
     </style>
 </head>
@@ -215,10 +228,6 @@
         const madeHandClasses = ["Straightflush", "Quads", "Fullhouse", "Flush", "Straight", "Set", "Trips", "Two Pair", "Over Pair", "Top Pair", "Mid Pair", "Bottom Pair", "Under Pair", "Ace High", "King High", "No Made Hand"];
         const drawingHandClasses = ["Combo Draw", "Nut Flush Draw", "Pair And Flush Draw", "Flush Draw", "OESD", "Gutshot", "A High BDFD 2 Cards", "BDFD 2 Cards", "A High BDFD 1 Card", "BDFD 1 Card", "No Pair No Draw", "No Draw"];
 
-
-        let gridWidth = 40;
-        let gridx = 30;
-        let gridy = 30;
         function colorHand(hand) {
             let coloredHand = "";
             switch (hand.charAt(1)) {
@@ -420,11 +429,11 @@
                     } else if (gutShotStraightDrawBoolean) {
                         drawingHandClassArray[index] = "Gutshot";
                     } else if (backDoorFlushDrawIndex >= 0 && (tempCard1 == "A" + suits[backDoorFlushDrawIndex]) || (tempCard2 == "A" + suits[backDoorFlushDrawIndex]) && tempCard1.slice(-1) == suits[backDoorFlushDrawIndex] && tempCard2.slice(-1) == suits[backDoorFlushDrawIndex]) {
-                        drawingHandClassArray[index] = "A High BDFD 2 Cards";
+                        drawingHandClassArray[index] = "Ax BDFD 2 Cards";
                     } else if ((madeHandClassArray[index] == "No Made Hand" || madeHandClassArray[index] == "King High") && backDoorFlushDrawIndex > 0 && tempCard1.slice(-1) == suits[backDoorFlushDrawIndex] && tempCard2.slice(-1) == suits[backDoorFlushDrawIndex]) {
                         drawingHandClassArray[index] = "BDFD 2 Cards";
                     } else if (backDoorFlushDrawIndex >= 0 && (tempCard1 == "A" + suits[backDoorFlushDrawIndex]) || (tempCard2 == "A" + suits[backDoorFlushDrawIndex]) && tempCard1.slice(-1) != tempCard2.slice(-1) && (tempCard1.slice(-1) == suits[backDoorFlushDrawIndex] || tempCard2.slice(-1) == suits[backDoorFlushDrawIndex])) {
-                        drawingHandClassArray[index] = "A High BDFD 1 Card";
+                        drawingHandClassArray[index] = "Ax BDFD 1 Card";
                     } else if ((madeHandClassArray[index] == "No Made Hand" || madeHandClassArray[index] == "King High") && backDoorFlushDrawIndex >= 0 && tempCard1.slice(-1) != tempCard2.slice(-1) && (tempCard1.slice(-1) == suits[backDoorFlushDrawIndex] || tempCard2.slice(-1) == suits[backDoorFlushDrawIndex])) {
                         drawingHandClassArray[index] = "BDFD 1 Card";
                     } else if (madeHandClassArray[index] == "No Made Hand" || madeHandClassArray[index] == "King High") {
@@ -455,17 +464,13 @@
                 range_div.appendChild(hand_matrix_div);
 
                 let hand_class_div = document.createElement("div");
-                hand_class_div.className = "hand-class-div";
+                hand_class_div.className = "hand-classes-div";
                 range_div.appendChild(hand_class_div);
                 index++;
                 let colors = situation_ranges[situation].range_colors.split(",");
-
                 let counts = new Map();
-
-                // let colors = handMatrix.getAttribute('range-colors').split(",");
                 let ranges = situation_ranges[situation].range_freqs.split("*");
                 let preflopRange = situation_ranges[situation].preflop_range.split(" ");
-
 
                 let colorsf_multi = [[[], [], [], [], [], [], [], [], [], [], [], [], []],
                 [[], [], [], [], [], [], [], [], [], [], [], [], []],
@@ -623,13 +628,9 @@
                         }
                     }
                     tempHandClassDiv.innerHTML = madeHandClass + " " + (totalCount * 100.0).toFixed(1);
-                    tempHandClassDiv.style.textAlign = "center";
-                    tempHandClassDiv.style.color = "Black";
-                    tempHandClassDiv.style.fontWeight = "Bold";
-                    tempHandClassDiv.style.fontSize = "1rem";
+                    tempHandClassDiv.className = "hand-class-div";
                     tempHandClassDiv.style.gridRow = row;
                     tempHandClassDiv.style.gridColumn = 1;
-                    tempHandClassDiv.style.border = "1px solid black";
 
                     tempHandClassDiv.style.backgroundImage = "linear-gradient(to right, " + str + " gray " + x + "% 100%)";
                     hand_class_div.append(tempHandClassDiv);
@@ -654,13 +655,9 @@
                         }
                     }
                     tempHandClassDiv.innerHTML = drawingHandClass + " " + (totalCount * 100.0).toFixed(1);
-                    tempHandClassDiv.style.textAlign = "center";
-                    tempHandClassDiv.style.color = "Black";
-                    tempHandClassDiv.style.fontWeight = "Bold";
-                    tempHandClassDiv.style.fontSize = "1rem";
+                    tempHandClassDiv.className = "hand-class-div";
                     tempHandClassDiv.style.gridRow = row;
                     tempHandClassDiv.style.gridColumn = 2;
-                    tempHandClassDiv.style.border = "1px solid black";
 
                     tempHandClassDiv.style.backgroundImage = "linear-gradient(to right, " + str + " gray " + x + "% 100%)";
                     hand_class_div.append(tempHandClassDiv);
