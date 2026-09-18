@@ -20,12 +20,13 @@
 
             position: absolute;
             z-index: 1;
+            width: 50%;
         }
 
         .tooltipTable {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            /* Optional: Adjust the gap between the divs */
+
         }
 
         .tooltipHandDiv {
@@ -33,8 +34,8 @@
             border: 2px solid black;
             border-collapse: collapse;
             padding: 2px;
-            font-size: 20px;
-            width: 5vw;
+            font-size: small;
+            width: 100%;
             height: 5vh;
         }
 
@@ -59,11 +60,10 @@
             flex: 50%;
         }
 
-        .hand-matrix {
-            padding: 30px 30px 0px 0px;
+        #range-viewer {
+            background-color: #0f172a;
+            padding: 5px 5px 5px 5px;
         }
-
-        @media (max-width: 600px) {}
 
         .matrixSingleHandDiv {
             box-sizing: border-box;
@@ -79,9 +79,9 @@
             padding: 0;
         }
 
-        .bottomDiv {
-            display: none;
-            grid-template-columns: repeat(25, 1fr);
+        .hand_matrix_div {
+            display: grid;
+            grid-template-columns: repeat(13, 1fr);
             grid-template-rows: repeat(13, 1fr);
             width: 100%;
         }
@@ -104,8 +104,8 @@
             background-color: white;
             text-align: center;
             font-weight: bold;
-            grid-column-start: 12;
-            grid-column-end: 14;
+            grid-column-start: 11;
+            grid-column-end: 13;
         }
 
 
@@ -156,6 +156,16 @@
             font-weight: bold;
             border: 2px solid white;
         }
+
+        .hand-class-div {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: repeat(13, 1fr);
+            width: 100%;
+        }
+        .range-div{
+            display: none;
+        }
     </style>
 </head>
 
@@ -163,7 +173,8 @@
     <!-- Yläpalkki latautuu tähän -->
     <div id="header-container"></div>
 
-    <div id="hand-matrix"></div>
+    <div id="range-viewer"></div>
+
     <script>
         fetch('header.html')
             .then(response => response.text())
@@ -191,7 +202,7 @@
                 }
             }
         };
-        
+
         const cards = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
         const suits = ['s', 'h', 'd', 'c'];
 
@@ -281,7 +292,7 @@
         }
 
         function loadRange(data) {
-            let handMatrix = document.getElementById("hand-matrix");
+            let range_viewer = document.getElementById("range-viewer");
             let configuration = data.configuration
             let board = data.board
 
@@ -426,18 +437,26 @@
                 }
             }
 
-
-
-
-
-
             let topDiv = document.createElement("div");
             topDiv.className = "topDiv";
-            handMatrix.appendChild(topDiv);
+            range_viewer.appendChild(topDiv);
+
+
+
             let index = 0;
             let firstLoop = true;
             let situation_ranges = data.ranges
             for (let situation in situation_ranges) {
+                let range_div = document.createElement("div");
+                range_div.className = "range-div";
+                range_viewer.appendChild(range_div);
+                let hand_matrix_div = document.createElement("div");
+                hand_matrix_div.className = "hand_matrix_div";
+                range_div.appendChild(hand_matrix_div);
+
+                let hand_class_div = document.createElement("div");
+                hand_class_div.className = "hand-class-div";
+                range_div.appendChild(hand_class_div);
                 index++;
                 let colors = situation_ranges[situation].range_colors.split(",");
 
@@ -525,15 +544,11 @@
                 const cardString = "AKQJT98765432";
                 for (let x = 0; x < 13; x++) {
                     for (let y = 0; y < 13; y++) {
-
-
                         for (let i = 0; i < colors.length; i++) {
                             colorsf_multi[y][x].push(0);
                         }
                     }
                 }
-
-
 
                 // For KsKh: 35.53 format
                 for (let i = ranges.length - 1; i >= 0; i--) {
@@ -578,8 +593,6 @@
 
                 }
 
-
-
                 for (let n = 0; n < colors.length; n++) {
                     for (let x = 0; x < 13; x++) {
                         for (let y = 0; y < 13; y++) {
@@ -588,11 +601,6 @@
                         }
                     }
                 }
-
-
-                let bottomDiv = document.createElement("div");
-                bottomDiv.className = "bottomDiv";
-                handMatrix.appendChild(bottomDiv);
 
 
 
@@ -620,11 +628,11 @@
                     tempHandClassDiv.style.fontWeight = "Bold";
                     tempHandClassDiv.style.fontSize = "1rem";
                     tempHandClassDiv.style.gridRow = row;
-                    tempHandClassDiv.style.gridColumn = 15 + "/" + 20;
+                    tempHandClassDiv.style.gridColumn = 1;
                     tempHandClassDiv.style.border = "1px solid black";
 
                     tempHandClassDiv.style.backgroundImage = "linear-gradient(to right, " + str + " gray " + x + "% 100%)";
-                    bottomDiv.append(tempHandClassDiv);
+                    hand_class_div.append(tempHandClassDiv);
                 }
 
                 row = 0;
@@ -651,11 +659,11 @@
                     tempHandClassDiv.style.fontWeight = "Bold";
                     tempHandClassDiv.style.fontSize = "1rem";
                     tempHandClassDiv.style.gridRow = row;
-                    tempHandClassDiv.style.gridColumn = 21 + "/" + 25;
+                    tempHandClassDiv.style.gridColumn = 2;
                     tempHandClassDiv.style.border = "1px solid black";
 
                     tempHandClassDiv.style.backgroundImage = "linear-gradient(to right, " + str + " gray " + x + "% 100%)";
-                    bottomDiv.append(tempHandClassDiv);
+                    hand_class_div.append(tempHandClassDiv);
                 }
 
 
@@ -684,22 +692,20 @@
                         tempDiv.setAttribute("tooltipText", colorsf_multi_tooltip[i][j]);
                         tempDiv.style.gridRow = i + 1;
                         tempDiv.style.gridColumn = j + 1;
-                        bottomDiv.appendChild(tempDiv);
+                        hand_matrix_div.appendChild(tempDiv);
                         tempDiv.setAttribute("isOnDiv", "false");
                         tempDiv.addEventListener("mouseenter", function () { event.target.classList.add("tipOn"); });
                         tempDiv.addEventListener("mouseout", function () { event.target.classList.remove("tipOn"); });
                     }
                 }
 
-
-
                 let tip = document.createElement("span");
                 tip.className = "tooltip";
-                bottomDiv.addEventListener("mouseout", function (event) {
+                hand_matrix_div.addEventListener("mouseout", function (event) {
                     tip.style.visibility = "hidden";
                     tip.innerHTML = "";
                 }, false);
-                bottomDiv.addEventListener('mousemove', function (event) {
+                hand_matrix_div.addEventListener('mousemove', function (event) {
                     tip.style.visibility = "visible";
                     let collection = document.getElementsByClassName("tipOn");
                     if (collection.length > 0) {
@@ -725,7 +731,7 @@
                     tip.style.left = `${left}px`;
                     tip.style.top = `${top}px`;
                 });
-                bottomDiv.appendChild(tip);
+                hand_matrix_div.appendChild(tip);
 
                 //Button for range switch
                 let rangeSwitchDiv = document.createElement("div");
@@ -734,10 +740,11 @@
                 rangeSwitchDiv.style.gridColumnStart = index;
                 rangeSwitchDiv.className = "range-switch-div";
                 rangeSwitchDiv.addEventListener('click', () => {
-                    Array.from(handMatrix.children).filter(el => el.className === 'bottomDiv').forEach(function (div) {
+                    Array.from(range_viewer.children).filter(el => el.className === 'range-div').forEach(function (div) {
                         div.style.display = 'none';
+                        console.log("hello");
                     });
-                    bottomDiv.style.display = 'grid';
+                    range_div.style.display = 'inline';
                     Array.from(topDiv.children).filter(el => el.className === 'range-switch-div').forEach(function (div) {
                         div.style.backgroundColor = "gray";
                     });
@@ -753,15 +760,15 @@
                     tempDiv.style.backgroundColor = colors[i];
                     tempDiv.style.gridColumnStart = 2 * i + 1;
                     tempDiv.style.gridColumnEnd = 2 * i + 3;
-                    bottomDiv.appendChild(tempDiv);
+                    hand_matrix_div.appendChild(tempDiv);
                 }
                 let tempDiv = document.createElement("div");
                 tempDiv.innerHTML = preflopCombos.toFixed(1) + "c";
                 tempDiv.className = "preflop-total";
-                bottomDiv.appendChild(tempDiv);
+                hand_matrix_div.appendChild(tempDiv);
                 if (firstLoop) {
                     firstLoop = false;
-                    bottomDiv.style.display = 'grid';
+                    range_div.style.display = 'grid';
                     rangeSwitchDiv.style.backgroundColor = "#007BFF";
                 }
             }
@@ -772,11 +779,9 @@
             topDiv.appendChild(firstCard);
             topDiv.appendChild(secondCard);
             topDiv.appendChild(thirdCard);
-            firstCard.style.gridColumnStart = 6;
-            secondCard.style.gridColumnStart = 7;
-            thirdCard.style.gridColumnStart = 8;
-
-
+            firstCard.style.gridColumnStart = 11;
+            secondCard.style.gridColumnStart = 12;
+            thirdCard.style.gridColumnStart = 13;
         };
 
         loadRange(json);
