@@ -388,12 +388,23 @@
             }
         };
 
+
         let rows;
         let headers;
         let currentRange;
         fetchTSVFile();
-        function handleRangeChange(newRange){
+        function handleRangeChange(newRange) {
             currentRange = newRange;
+            // If a cell is already selected, re-render the matrices with the new range data
+            if (lastSelectedCell) {
+                if (lastSelectedCell.dataset.hand) {
+                    // A specific hand is selected in the main matrix
+                    handleHandSelection(lastSelectedCell.dataset.hand);
+                } else if (lastSelectedCell.dataset.spot) {
+                    // A specific situation is selected in one of the smaller matrices
+                    updateMainMatrix(lastSelectedCell.dataset);
+                }
+            }
         }
 
         function fetchTSVFile() {
