@@ -287,8 +287,10 @@
                 preflopRangeCol = CONFIG.columns.preflopRangePrefix + index;
                 rangeColorsCol = CONFIG.columns.rangeColorsPrefix + index;
                 freqsCol = CONFIG.columns.freqsPrefix + index;
+                console.log(ranges);
                 
             }
+            console.log(row[headers.indexOf(CONFIG.columns.configuration)]);
             const json = {
                 "configuration": row[headers.indexOf(CONFIG.columns.configuration)],
                 "board": row[headers.indexOf(CONFIG.columns.board)],
