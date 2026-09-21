@@ -294,7 +294,7 @@
             }
         }
         function getMatrixData(rowNumber) {
-            let row = rows[2];
+            let row = rows[rowNumber];
             let ranges = {};
             let index = 1;
             let nodeNameCol = CONFIG.columns.nodeNamePrefix + index;
@@ -412,7 +412,6 @@
 
             let configuration = data.configuration
             let board = data.board
-            console.log(data.range_colors);
 
             let madeHandClassArray = new Array(1326).fill("");
             let drawingHandClassArray = new Array(1326).fill("");
