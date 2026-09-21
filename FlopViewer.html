@@ -262,11 +262,11 @@
             for (let i = 1; i < rows.length; i++) {
                 const btn = createSpotButton(rows[i][headers.indexOf(CONFIG.columns.configuration)], rows[i][headers.indexOf(CONFIG.columns.board)], i);
                 if (rows[i][headers.indexOf(CONFIG.columns.configuration)] == "2Bet_BU_BB") {
-                    button.style.gridColumn = '1';
+                    btn.style.gridColumn = '1';
                 } else if (rows[i][headers.indexOf(CONFIG.columns.configuration)] == "2Bet_BU_UTG") {
-                    button.style.gridColumn = '2';
+                    btn.style.gridColumn = '2';
                 } else {
-                    button.style.gridColumn = '3';
+                    btn.style.gridColumn = '3';
                 }
                 container.appendChild(btn);
 
