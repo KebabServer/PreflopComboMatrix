@@ -237,27 +237,9 @@
                     if (!response.ok) throw new Error('Network response was not ok');
                     return response.text();
                 })
-                .then(tsvData => {
-                    // Split text into lines, filter out empty trailing lines
-                    const lines = tsvData.trim().split(/\r?\n/);
-
-                    if (lines.length === 0) return [];
-
-                    // Extract headers from the first row
-                    const headers = lines[0].split('\t').map(header => header.trim());
-
-                    // Map remaining lines into JSON objects
-                    const jsonResult = lines.slice(1).map(line => {
-                        const values = line.split('\t');
-                        return headers.reduce((obj, header, index) => {
-                            // Fall back to empty string if a cell value is missing
-                            obj[header] = values[index] !== undefined ? values[index].trim() : '';
-                            return obj;
-                        }, {});
-                    });
-
-                    console.log(jsonResult);
-                    return jsonResult;
+                .then(data => {
+                    rows = data.split('\n').map(row => row.split('\t'));
+                    headers = rows[0];
                 })
                 .catch(error => console.error('Error fetching TSV file:', error));
         })();
