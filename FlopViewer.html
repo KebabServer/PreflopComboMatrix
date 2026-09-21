@@ -302,7 +302,6 @@
             let rangeColorsCol = CONFIG.columns.rangeColorsPrefix + index;
             let freqsCol = CONFIG.columns.freqsPrefix + index;
             while (row[headers.indexOf(nodeNameCol)] != "" && row[headers.indexOf(nodeNameCol)] != undefined && row[headers.indexOf(nodeNameCol)] != "") {
-                console.log(row[headers.indexOf(rangeColorsCol)]);
                 ranges[row[headers.indexOf(nodeNameCol)]] = {
                     "preflop_range": row[headers.indexOf(preflopRangeCol)],
                     "range_colors": row[headers.indexOf(rangeColorsCol)],
@@ -320,7 +319,6 @@
                 "ranges": ranges
 
             }
-            console.log(JSON.stringify(json, null, 2));
             return json;
         }
 
@@ -850,7 +848,6 @@
                 rangeSwitchDiv.addEventListener('click', () => {
                     Array.from(range_viewer.children).filter(el => el.className === 'range-div').forEach(function (div) {
                         div.style.display = 'none';
-                        console.log("hello");
                     });
                     range_div.style.display = 'inline';
                     Array.from(topDiv.children).filter(el => el.className === 'range-switch-div').forEach(function (div) {
