@@ -245,6 +245,27 @@
                 .catch(error => console.error('Error fetching TSV file:', error));
         })();
 
+        function createSpotButton(title, cards, matrixId) {
+            const btn = document.createElement('button');
+            btn.className = 'spot-btn';
+
+            // Format text with a line break matching your markup structure
+            btn.innerHTML = `${title}<br>${cards}`;
+
+            // Attach the dynamic click event
+            btn.onclick = function () {
+                loadRange(getMatrixData(matrixId));
+            };
+
+            return btn;
+        }
+
+        function createSpotButtons() {
+            for (let i = 1; i < rows.length; i++) {
+                createSpotButton(rows[i][headers.indexOf(CONFIG.columns.configuration)], rows[i][headers.indexOf(CONFIG.columns.board)], i);
+            }
+        }
+
 
         const flop_range_data = {
             "SRP_BTN_BB_AsJh6s": {
