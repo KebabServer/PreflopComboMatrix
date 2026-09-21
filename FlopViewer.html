@@ -379,10 +379,14 @@
         }
 
         function loadRange(data) {
+            console.log(data);
             let range_viewer = document.getElementById("range-viewer");
             range_viewer.textContent = "";
+            
             let configuration = data.configuration
+            console.log(configuration);
             let board = data.board
+            console.log(board);
 
             let madeHandClassArray = new Array(1326).fill("");
             let drawingHandClassArray = new Array(1326).fill("");
