@@ -219,9 +219,19 @@
             });
     </script>
     <script>
+        const CONFIG = {
+            columns: {
+                configuration: 'Configuration',
+                board: 'Board',
+                nodeNamePrefix: 'NodeName',
+                preflopRangePrefix: 'PreflopRange',
+                rangeColorsPrefix: 'RangeColors1',
+                freqsPrefix: 'Freqs'
+            }
+        };
         let rows;
         let headers;
-
+        console.log(rows[1]);
         (function fetchTSVFile() {
             fetch(`FlopViewer/FlopViewer.tsv`)
                 .then(response => {
@@ -274,6 +284,35 @@
                 }
             }
 
+        }
+        function getMatrixData(row) {
+            let ranges = {};
+            let index = 1;
+            let nodeNameCol = CONFIG.columns.nodeNamePrefix + index;
+            let preflopRangeCol = CONFIG.columns.preflopRangePrefix + index;
+            let rangeColorsCol = CONFIG.columns.rangeColorsPrefix + index;
+            let freqsCol = CONFIG.columns.freqsPrefix + index;
+            while (row[headers.indexOf(nodeNameCol)] != "" && row[headers.indexOf(nodeNameCol)] != undefined && row[headers.indexOf(nodeNameCol)] != "") {
+                ranges[row[nodeNameCol]] = {
+                    "preflop_range": row[preflopRangeCol],
+                    "range_colors": row[rangeColorsCol],
+                    "range_freqs": row[freqsCol]
+                };
+                index++;
+                nodeNameCol = CONFIG.columns.nodeNamePrefix + index;
+                preflopRangeCol = CONFIG.columns.preflopRangePrefix + index;
+                rangeColorsCol = CONFIG.columns.rangeColorsPrefix + index;
+                freqsCol = CONFIG.columns.freqsPrefix + index;
+                
+            }
+            const json = {
+                "configuration": row[headers.indexOf(CONFIG.columns.configuration)],
+                "board": row[headers.indexOf(CONFIG.columns.board)],
+                "ranges": ranges
+
+            }
+            console.log(JSON.stringify(json, null, 2));
+            return JSON.stringify(json, null, 2);
         }
 
         const cards = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
