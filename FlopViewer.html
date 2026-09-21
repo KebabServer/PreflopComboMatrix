@@ -206,7 +206,7 @@
         <div id="spot-btns">
             <button class="spot-btn" onclick="loadRange(getMatrixData(2))">SRP BTN vs BB
                 AsJh6s</button>
-                <button class="spot-btn" onclick="loadRange(flop_range_data['SRP_BTN_BB_AsJh6s'])">test</button>
+            <button class="spot-btn" onclick="loadRange(flop_range_data['SRP_BTN_BB_AsJh6s'])">test</button>
         </div>
     </div>
 
@@ -283,7 +283,7 @@
                 nodeNameCol = CONFIG.columns.nodeNamePrefix + index;
                 preflopRangeCol = CONFIG.columns.preflopRangePrefix + index;
                 rangeColorsCol = CONFIG.columns.rangeColorsPrefix + index;
-                freqsCol = CONFIG.columns.freqsPrefix + index;                
+                freqsCol = CONFIG.columns.freqsPrefix + index;
             }
             const json = {
                 "configuration": row[headers.indexOf(CONFIG.columns.configuration)],
@@ -380,14 +380,12 @@
         }
 
         function loadRange(data) {
-            console.log(data);
             let range_viewer = document.getElementById("range-viewer");
             range_viewer.textContent = "";
-            
+
             let configuration = data.configuration
-            console.log(configuration);
             let board = data.board
-            console.log(board);
+            console.log(data.range_colors);
 
             let madeHandClassArray = new Array(1326).fill("");
             let drawingHandClassArray = new Array(1326).fill("");
