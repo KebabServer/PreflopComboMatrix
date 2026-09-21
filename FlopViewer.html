@@ -262,8 +262,10 @@
         }
 
         function createSpotButtons() {
+            const container = document.getElementById('spot-btns');
             for (let i = 1; i < rows.length; i++) {
-                createSpotButton(rows[i][headers.indexOf(CONFIG.columns.configuration)], rows[i][headers.indexOf(CONFIG.columns.board)], i);
+                const btn = createSpotButton(rows[i][headers.indexOf(CONFIG.columns.configuration)], rows[i][headers.indexOf(CONFIG.columns.board)], i);
+                container.appendChild(btn);
             }
         }
 
