@@ -274,6 +274,7 @@
             let rangeColorsCol = CONFIG.columns.rangeColorsPrefix + index;
             let freqsCol = CONFIG.columns.freqsPrefix + index;
             while (row[headers.indexOf(nodeNameCol)] != "" && row[headers.indexOf(nodeNameCol)] != undefined && row[headers.indexOf(nodeNameCol)] != "") {
+                console.log(row[headers.indexOf(rangeColorsCol)]);
                 ranges[row[headers.indexOf(nodeNameCol)]] = {
                     "preflop_range": row[headers.indexOf(preflopRangeCol)],
                     "range_colors": row[headers.indexOf(rangeColorsCol)],
