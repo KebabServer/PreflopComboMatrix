@@ -285,7 +285,8 @@
             }
 
         }
-        function getMatrixData(row) {
+        function getMatrixData(rowNumber) {
+            let row = rows[rowNumber];
             let ranges = {};
             let index = 1;
             let nodeNameCol = CONFIG.columns.nodeNamePrefix + index;
