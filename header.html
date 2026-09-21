@@ -28,8 +28,11 @@
     }
 
     .header li {
-        flex: 1; /* Distributes tabs evenly across mobile width */
+        flex: 1;
+        /* Distributes tabs evenly across mobile width */
         text-align: center;
+        position: relative;
+        /* Position relative for absolute positioning of dropdown */
     }
 
     /* Slim link styling with fluid typography */
@@ -37,13 +40,16 @@
         color: #ffffff;
         text-decoration: none;
         font-family: Arial, sans-serif;
-        font-size: clamp(10px, 2.7vw, 14px); /* Scales smoothly from mobile to desktop */
+        font-size: clamp(10px, 2.7vw, 14px);
+        /* Scales smoothly from mobile to desktop */
         font-weight: 600;
-        padding: 5px 4px; /* Reduced vertical padding from 10px to 5px */
+        padding: 5px 4px;
+        /* Reduced vertical padding from 10px to 5px */
         border-radius: 4px;
         transition: background-color 0.2s ease;
         display: block;
-        white-space: nowrap; /* Prevents text from breaking onto multiple lines */
+        white-space: nowrap;
+        /* Prevents text from breaking onto multiple lines */
     }
 
     .header a:hover {
@@ -55,15 +61,55 @@
         color: #ffffff;
     }
 
+    /* Dropdown Styles */
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background-color: #2c3e50;
+        min-width: 140px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
+        border-radius: 0 0 4px 4px;
+        z-index: 1000;
+        padding: 4px 0;
+        flex-direction: column;
+    }
 
+    /* Show dropdown on hover */
+    .dropdown:hover .dropdown-menu {
+        display: flex;
+    }
+
+    .dropdown-menu li {
+        width: 100%;
+        text-align: left;
+    }
+
+    .dropdown-menu a {
+        padding: 8px 12px;
+        border-radius: 0;
+    }
+
+    .dropdown-menu a:hover {
+        background-color: #3498db;
+    }
 </style>
 
 <nav class="header">
     <ul>
         <li><a href="PreflopViewer.html?v=1">Preflop</a></li>
         <li><a href="RangeTrainer.html?v=1">Trainer</a></li>
-        <li><a href="flop_reports.html?v=1">Flop Reports</a></li>
-        <li><a href="PreflopRangeEditor.html?v=1">Preflop Editor</a></li>
         <li><a href="RangeViewer.html?v=1">Range Viewer</a></li>
+
+        <!-- Dropdown Item -->
+        <li class="dropdown">
+            <a href="javascript:void(0)">More &#9662;</a>
+            <ul class="dropdown-menu">
+                <li><a href="PreflopRangeEditor.html?v=1">Preflop Editor</a></li>
+                <li><a href="flop_reports.html?v=1">Flop Reports</a></li>
+                <li><a href="Link3.html?v=1">Option 3</a></li>
+            </ul>
+        </li>
     </ul>
 </nav>
