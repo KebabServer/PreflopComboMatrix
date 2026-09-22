@@ -179,18 +179,36 @@
         }
 
         #spot-btns {
-            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
             margin-top: 15px;
-            text-align: center;
+        }
+
+        .dropdown-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            min-width: 220px;
+            flex: 1;
+        }
+
+        .dropdown-label {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .spot-dropdown {
             width: 100%;
-            max-width: 400px;
             padding: 10px;
             background-color: #2563eb;
             color: white;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: bold;
             border: none;
             border-radius: 8px;
@@ -246,7 +264,7 @@
                 .then(data => {
                     rows = data.split('\n').map(row => row.split('\t'));
                     headers = rows[0];
-                    createSpotButtons();
+                    createSpotButtons(CONFIG.columns.category);
                 })
                 .catch(error => console.error('Error fetching TSV file:', error));
         })();
@@ -266,47 +284,80 @@
             return btn;
         }
 
-        function createSpotButtons() {
-    const container = document.getElementById('spot-btns');
-    container.innerHTML = ''; // Clear container
+        function createSpotButtons(groupByColumn = CONFIG.columns.category) {
+            const container = document.getElementById('spot-btns');
+            container.innerHTML = ''; // Clear container
 
-    // Create the dropdown element
-    const select = document.createElement('select');
-    select.className = 'spot-dropdown';
-    
-    // Attach the change event to load the selected range
-    select.onchange = function () {
-        if (this.value) {
-            loadRange(getMatrixData(this.value));
+            const groupColIndex = headers.indexOf(groupByColumn);
+            const titleIndex = headers.indexOf(CONFIG.columns.configuration);
+            const cardsIndex = headers.indexOf(CONFIG.columns.board);
+
+            // 1. Group rows by the specified parameter value
+            const groups = {};
+            for (let i = 1; i < rows.length; i++) {
+                const groupKey = (groupColIndex !== -1 && rows[i][groupColIndex])
+                    ? rows[i][groupColIndex]
+                    : 'General';
+
+                if (!groups[groupKey]) {
+                    groups[groupKey] = [];
+                }
+                groups[groupKey].push({rowIndex: i, rowData: rows[i]});
+            }
+
+            // 2. Build a dropdown for each group
+            Object.keys(groups).forEach(groupName => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'dropdown-wrapper';
+
+                // Add group label
+                const label = document.createElement('label');
+                label.className = 'dropdown-label';
+                label.textContent = groupName;
+
+                // Create select element
+                const select = document.createElement('select');
+                select.className = 'spot-dropdown';
+
+                // Add placeholder option
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = `-- Select Spot --`;
+                defaultOption.disabled = true;
+                defaultOption.selected = true;
+                select.appendChild(defaultOption);
+
+                // Populate options for this specific group
+                groups[groupName].forEach(item => {
+                    const title = item.rowData[titleIndex];
+                    const cards = item.rowData[cardsIndex];
+
+                    const option = document.createElement('option');
+                    option.value = item.rowIndex;
+                    option.textContent = `${title} (${cards})`;
+                    select.appendChild(option);
+                });
+
+                // Trigger matrix update on change & reset other dropdown selections
+                select.onchange = function () {
+                    if (this.value) {
+                        // Reset all other dropdowns to their placeholder
+                        document.querySelectorAll('.spot-dropdown').forEach(s => {
+                            if (s !== select) s.selectedIndex = 0;
+                        });
+
+                        loadRange(getMatrixData(this.value));
+                    }
+                };
+
+                wrapper.appendChild(label);
+                wrapper.appendChild(select);
+                container.appendChild(wrapper);
+            });
         }
-    };
-
-    // Add a default placeholder option
-    const defaultOption = document.createElement('option');
-    defaultOption.value = '';
-    defaultOption.textContent = '-- Select a Spot --';
-    defaultOption.disabled = true;
-    defaultOption.selected = true;
-    select.appendChild(defaultOption);
-
-    // Loop through the TSV rows and create options
-    for (let i = 1; i < rows.length; i++) {
-        const title = rows[i][headers.indexOf(CONFIG.columns.configuration)];
-        const cards = rows[i][headers.indexOf(CONFIG.columns.board)];
-        
-        const option = document.createElement('option');
-        option.value = i;
-        // Format text to combine title and cards cleanly in the dropdown
-        option.textContent = `${title} (${cards})`;
-        
-        select.appendChild(option);
-    }
-    
-    container.appendChild(select);
-}
 
 
-        const flop_range_data = {
+        const flop_range_data_example = {
             "SRP_BTN_BB_AsJh6s": {
                 "configuration": "BTN vs BB Single Raised Pot",
                 "board": "AsJh6s",
