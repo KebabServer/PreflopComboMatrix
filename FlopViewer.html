@@ -221,77 +221,6 @@
             background-color: #0f172a;
             color: white;
         }
-
-        .card-s {
-            color: #000000;
-            font-weight: bold;
-        }
-
-        /* Spades */
-        .card-h {
-            color: #dc2626;
-            font-weight: bold;
-        }
-
-        /* Hearts */
-        .card-d {
-            color: #2563eb;
-            font-weight: bold;
-        }
-
-        /* Diamonds */
-        .card-c {
-            color: #16a34a;
-            font-weight: bold;
-        }
-
-        /* Clubs */
-
-        .custom-select-wrapper {
-            position: relative;
-            width: 100%;
-        }
-
-        .custom-select-trigger {
-            background-color: #777777;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .custom-options {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background-color: #777777;
-            border: 1fr solid #334155;
-            border-radius: 8px;
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 100;
-        }
-
-        .custom-options.open {
-            display: block;
-        }
-
-        .custom-option {
-            padding: 10px;
-            cursor: pointer;
-            background-color: #777777;
-            border-bottom: 1px solid #334155;
-        }
-
-        .custom-option:hover {
-            background-color: #666666;
-        }
     </style>
 </head>
 
@@ -354,87 +283,75 @@
 
             return btn;
         }
-        function formatBoardHTML(cards) {
-            const suitSymbols = {s: '♠', h: '♥', d: '♦', c: '♣'};
-            return cards.replace(/(10|[2-9TJQKA])([shdc])/gi, (match, rank, suit) => {
-                const lowerSuit = suit.toLowerCase();
-                const symbol = suitSymbols[lowerSuit] || suit;
-                return `<span class="card-${lowerSuit}">${rank}${symbol}</span> `;
-            });
-        }
 
         function createSpotButtons() {
             const container = document.getElementById('spot-btns');
-            container.innerHTML = '';
+            container.innerHTML = ''; // Clear container
 
             const groupColIndex = headers.indexOf(CONFIG.columns.configuration);
+            const titleIndex = headers.indexOf(CONFIG.columns.configuration);
             const cardsIndex = headers.indexOf(CONFIG.columns.board);
 
+            // 1. Group rows by the specified parameter value
             const groups = {};
             for (let i = 1; i < rows.length; i++) {
                 const groupKey = (groupColIndex !== -1 && rows[i][groupColIndex])
                     ? rows[i][groupColIndex]
                     : 'General';
 
-                if (!groups[groupKey]) groups[groupKey] = [];
+                if (!groups[groupKey]) {
+                    groups[groupKey] = [];
+                }
                 groups[groupKey].push({rowIndex: i, rowData: rows[i]});
             }
-
+            // 2. Build a dropdown for each group
             Object.keys(groups).forEach(groupName => {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'dropdown-wrapper';
 
+                // Add group label
                 const label = document.createElement('label');
                 label.className = 'dropdown-label';
                 label.textContent = groupName;
 
-                // Create Custom Dropdown Container
-                const customSelect = document.createElement('div');
-                customSelect.className = 'custom-select-wrapper';
+                // Create select element
+                const select = document.createElement('select');
+                select.className = 'spot-dropdown';
 
-                const trigger = document.createElement('div');
-                trigger.className = 'custom-select-trigger';
-                trigger.innerHTML = '<span>-- Select Spot --</span> <span>▼</span>';
+                // Add placeholder option
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = `-- Select Spot --`;
+                defaultOption.disabled = true;
+                defaultOption.selected = true;
+                select.appendChild(defaultOption);
 
-                const optionsContainer = document.createElement('div');
-                optionsContainer.className = 'custom-options';
-
-                // Toggle dropdown open/close
-                trigger.onclick = (e) => {
-                    e.stopPropagation();
-                    document.querySelectorAll('.custom-options').forEach(opt => {
-                        if (opt !== optionsContainer) opt.classList.remove('open');
-                    });
-                    optionsContainer.classList.toggle('open');
-                };
-
-                // Populate options with colored HTML
+                // Populate options for this specific group
                 groups[groupName].forEach(item => {
+                    const title = item.rowData[titleIndex];
                     const cards = item.rowData[cardsIndex];
-                    const optionDiv = document.createElement('div');
-                    optionDiv.className = 'custom-option';
-                    optionDiv.innerHTML = formatBoardHTML(cards);
 
-                    optionDiv.onclick = function () {
-                        trigger.querySelector('span').innerHTML = formatBoardHTML(cards);
-                        optionsContainer.classList.remove('open');
-                        loadRange(getMatrixData(item.rowIndex));
-                    };
-
-                    optionsContainer.appendChild(optionDiv);
+                    const option = document.createElement('option');
+                    option.value = item.rowIndex;
+                    option.textContent = `${cards}`;
+                    select.appendChild(option);
                 });
 
-                customSelect.appendChild(trigger);
-                customSelect.appendChild(optionsContainer);
+                // Trigger matrix update on change & reset other dropdown selections
+                select.onchange = function () {
+                    if (this.value) {
+                        // Reset all other dropdowns to their placeholder
+                        document.querySelectorAll('.spot-dropdown').forEach(s => {
+                            if (s !== select) s.selectedIndex = 0;
+                        });
+
+                        loadRange(getMatrixData(this.value));
+                    }
+                };
 
                 wrapper.appendChild(label);
-                wrapper.appendChild(customSelect);
+                wrapper.appendChild(select);
                 container.appendChild(wrapper);
-            });
-
-            // Close open dropdowns on outside click
-            document.addEventListener('click', () => {
-                document.querySelectorAll('.custom-options').forEach(opt => opt.classList.remove('open'));
             });
         }
 
