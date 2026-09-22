@@ -283,6 +283,12 @@
 
             return btn;
         }
+        function formatBoardText(cards) {
+            const suitSymbols = {s: '♠', h: '♥', d: '♦', c: '♣'};
+            return cards.replace(/(10|[2-9TJQKA])([shdc])/gi, (match, rank, suit) => {
+                return `${rank}${suitSymbols[suit.toLowerCase()] || suit} `;
+            }).trim();
+        }
 
         function createSpotButtons() {
             const container = document.getElementById('spot-btns');
@@ -333,7 +339,7 @@
 
                     const option = document.createElement('option');
                     option.value = item.rowIndex;
-                    option.textContent = `${title} (${cards})`;
+                    option.textContent = formatBoardText(cards);
                     select.appendChild(option);
                 });
 
