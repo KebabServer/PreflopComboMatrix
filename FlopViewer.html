@@ -253,9 +253,8 @@
         }
 
         .custom-select-trigger {
-            background-color: #dddddd;
-            color: #1e293b;
-            /* Dark text for contrast */
+            background-color: #2563eb;
+            color: white;
             padding: 10px;
             border-radius: 8px;
             cursor: pointer;
@@ -263,7 +262,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1px solid #ccc;
         }
 
         .custom-options {
@@ -272,26 +270,27 @@
             top: 100%;
             left: 0;
             right: 0;
-            background-color: #dddddd;
-            /* Dropdown list background */
-            border: 1px solid #ccc;
+            background-color: #0f172a;
+            border: 1fr solid #334155;
             border-radius: 8px;
             max-height: 200px;
             overflow-y: auto;
             z-index: 100;
         }
 
+        .custom-options.open {
+            display: block;
+        }
+
         .custom-option {
             padding: 10px;
             cursor: pointer;
-            background-color: #dddddd;
-            border-bottom: 1px solid #ccc;
-            color: #1e293b;
+            background-color: #1e293b;
+            border-bottom: 1px solid #334155;
         }
 
         .custom-option:hover {
-            background-color: #c8c8c8;
-            /* Slightly darker shade on hover */
+            background-color: #334155;
         }
     </style>
 </head>
