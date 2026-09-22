@@ -263,6 +263,7 @@
                 })
                 .then(data => {
                     rows = data.split('\n').map(row => row.split('\t'));
+                    console.log(rows);
                     headers = rows[0];
                     createSpotButtons();
                 })
