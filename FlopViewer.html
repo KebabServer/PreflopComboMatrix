@@ -262,8 +262,7 @@
                     return response.text();
                 })
                 .then(data => {
-                    rows = data.split('\n').map(row => row.split('\t'));
-                    console.log(rows);
+                    rows = data.trim().split('\n').map(row => row.split('\t'));
                     headers = rows[0];
                     createSpotButtons();
                 })
@@ -290,7 +289,6 @@
             container.innerHTML = ''; // Clear container
 
             const groupColIndex = headers.indexOf(CONFIG.columns.configuration);
-            console.log(groupColIndex);
             const titleIndex = headers.indexOf(CONFIG.columns.configuration);
             const cardsIndex = headers.indexOf(CONFIG.columns.board);
 
@@ -306,7 +304,6 @@
                 }
                 groups[groupKey].push({rowIndex: i, rowData: rows[i]});
             }
-            console.log(groups);
             // 2. Build a dropdown for each group
             Object.keys(groups).forEach(groupName => {
                 const wrapper = document.createElement('div');
@@ -337,7 +334,6 @@
                     const option = document.createElement('option');
                     option.value = item.rowIndex;
                     option.textContent = `${title} (${cards})`;
-                    console.log(title);
                     select.appendChild(option);
                 });
 
