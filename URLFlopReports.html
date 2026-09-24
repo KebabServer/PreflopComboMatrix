@@ -85,8 +85,8 @@
 </head>
 
 <body>
-     <div id="header-container"></div>
-    
+    <div id="header-container"></div>
+
     <div class="rowDiv">
         <h2>All Flops</h2>
         <canvas id="csvCanvas" width="1800" height="115"></canvas>
@@ -141,7 +141,7 @@
                 document.getElementById('header-container').innerHTML = data;
             });
     </script>
-    
+
     <script>
         document.getElementById('fileInput').addEventListener('change', handleFileSelect, false);
         const canvasHeight = 100;
@@ -422,7 +422,7 @@
                 fileMap[selectedKeys].forEach(fileName => {
                     const newButton = document.createElement('button');
                     newButton.textContent = fileName;
-                    newButton.onclick = function () { fetchLocalCSVFile(fileName); };
+                    newButton.onclick = function () {fetchLocalCSVFile(fileName);};
 
                     group5.appendChild(newButton);
                 });
@@ -459,8 +459,8 @@
             }
         }
 
-        // URL initialization
-        window.addEventListener('DOMContentLoaded', () => {
+        // URL initialization (Executes immediately since it is at the bottom of the body)
+        function initFromURL() {
             const urlParams = new URLSearchParams(window.location.search);
             const keyParam = urlParams.get('key');
 
@@ -483,7 +483,10 @@
             if (firstGroup5Btn && firstGroup5Btn.textContent !== 'No files') {
                 firstGroup5Btn.click();
             }
-        });
+        }
+
+        // Run the setup
+        initFromURL();
     </script>
 </body>
 
