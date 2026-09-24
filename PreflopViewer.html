@@ -36,7 +36,6 @@
             flex: 0 0 auto;
         }
 
-        /* Main Container fits full screen height */
         .app-container {
             display: flex;
             flex-direction: column;
@@ -135,29 +134,15 @@
             box-sizing: border-box;
         }
 
-        /* RFI 2-Bet spans both columns */
-        .small-matrix-wrapper:nth-child(1) {
-            grid-column: span 2;
-        }
-
-        #matrix-2bet {
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-        }
-
         #matrix-3bet,
         #matrix-4bet {
             grid-template-columns: repeat(6, minmax(0, 1fr));
         }
 
-        #matrix-2bet .matrix-cell {
-            font-size: clamp(8px, 2.2vw, 12px);
-            aspect-ratio: auto;
-            padding: 0.3rem 0;
-        }
 
         #matrix-3bet .matrix-cell,
         #matrix-4bet .matrix-cell {
-            font-size: clamp(7px, 1.9vw, 11px);
+            font-size: clamp(6px, 1.8vw, 11px);
             aspect-ratio: 1;
         }
 
@@ -198,11 +183,6 @@
             .matrix-title {
                 font-size: 0.65rem;
                 margin-bottom: 0.15rem;
-            }
-
-            #matrix-2bet .matrix-cell {
-                font-size: clamp(7px, 1.6vh, 10px);
-                padding: 0.15rem 0;
             }
 
             #matrix-3bet .matrix-cell,
@@ -265,7 +245,6 @@
                 margin-bottom: 0.5rem;
             }
 
-            #matrix-2bet .matrix-cell,
             #matrix-3bet .matrix-cell,
             #matrix-4bet .matrix-cell {
                 font-size: 0.85rem;
@@ -324,16 +303,12 @@
         <!-- Breakdown / Situation Matrices Section -->
         <div class="small-matrices-container">
             <div class="small-matrix-wrapper">
-                <div class="matrix-title">RFI (2-Bet)</div>
-                <div class="matrix small-matrix" id="matrix-2bet"></div>
-            </div>
-            <div class="small-matrix-wrapper">
-                <div class="matrix-title">vs Open (3-Bet)</div>
-                <div class="matrix small-matrix" id="matrix-3bet"></div>
-            </div>
-            <div class="small-matrix-wrapper">
-                <div class="matrix-title">vs 3-Bet (4-Bet)</div>
+                <div class="matrix-title">4-Bet</div>
                 <div class="matrix small-matrix" id="matrix-4bet"></div>
+            </div>
+            <div class="small-matrix-wrapper">
+                <div class="matrix-title">3-Bet</div>
+                <div class="matrix small-matrix" id="matrix-3bet"></div>
             </div>
         </div>
 
@@ -497,7 +472,7 @@
             const mainMatrixCells = document.getElementById('main-matrix').querySelectorAll('.matrix-cell');
             mainMatrixCells.forEach(cell => {cell.style.backgroundImage = 'none';});
 
-            ['matrix-2bet', 'matrix-3bet', 'matrix-4bet'].forEach(matrixId => {
+            ['matrix-3bet', 'matrix-4bet'].forEach(matrixId => {
                 const cells = document.getElementById(matrixId).querySelectorAll('.matrix-cell');
                 cells.forEach(cell => {cell.style.backgroundImage = 'none';});
             });
@@ -516,12 +491,7 @@
                     const cell = document.createElement('div');
                     cell.classList.add('matrix-cell');
 
-                    if (container === document.getElementById('matrix-2bet')) {
-                        cell.textContent = content[i * cols + j] || '';
-                        cell.dataset.pos1 = positions[j];
-                        cell.dataset.pos2 = positions[j];
-                        cell.dataset.spot = "2Bet";
-                    } else if (container === document.getElementById('matrix-3bet')) {
+                    if (container === document.getElementById('matrix-3bet')) {
                         cell.textContent = content[i * cols + j] || '';
                         cell.dataset.pos1 = positions[i];
                         cell.dataset.pos2 = positions[j];
@@ -529,8 +499,8 @@
                     } else if (container === document.getElementById('matrix-4bet')) {
                         if (j == 0) {
                             cell.textContent = content[i * cols + j] || '';
-                            cell.dataset.pos1 = positions[j];
-                            cell.dataset.pos2 = positions[j];
+                            cell.dataset.pos1 = positions[i];
+                            cell.dataset.pos2 = positions[i];
                             cell.dataset.spot = "2Bet";
                         } else {
                             cell.textContent = content[i * cols + j] || '';
@@ -561,7 +531,6 @@
         }
 
         function handleHandSelection(hand) {
-            update2BetMatrix(hand);
             update3BetMatrix(hand);
             update4BetMatrix(hand);
         }
@@ -587,14 +556,6 @@
             });
             gradientString += `, ${CONFIG.colors.defaultGradient} ${currentFreq * 100}%, ${CONFIG.colors.defaultGradient} 100%)`;
             return gradientString;
-        }
-
-        function update2BetMatrix(Hand) {
-            const cells = document.getElementById('matrix-2bet').querySelectorAll('.matrix-cell');
-            cells.forEach((cell, index) => {
-                const data = getHandData(Hand, "2Bet", positions[index], positions[index]);
-                cell.style.backgroundImage = buildGradientStyle(data);
-            });
         }
 
         function update3BetMatrix(Hand) {
@@ -635,7 +596,6 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const mainMatrix = document.getElementById('main-matrix');
-            const smallMatrix1 = document.getElementById('matrix-2bet');
             const smallMatrix2 = document.getElementById('matrix-3bet');
             const smallMatrix3 = document.getElementById('matrix-4bet');
 
@@ -657,7 +617,6 @@
                     }
                 }
             }
-            generateMatrix(smallMatrix1, 5, 1, handleSituationMatrixClick, positions);
             generateMatrix(smallMatrix2, 6, 5, handleSituationMatrixClick, positionsVsPositions);
             generateMatrix(smallMatrix3, 6, 5, handleSituationMatrixClick, positionsVsPositions2);
         });
