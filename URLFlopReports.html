@@ -85,7 +85,39 @@
 </head>
 
 <body>
-    <div id="header-container"></div>
+     <div id="header-container"></div>
+    
+    <div class="container">
+        <div><input type="file" id="fileInput" accept=".csv"></div>
+        <div class="button-group" id="group1">
+            <button onclick="selectButton(this)">Simple</button>
+            <button onclick="selectButton(this)">General</button>
+        </div>
+        <div class="button-group" id="group2">
+            <button onclick="selectButton(this)">SRP</button>
+            <button onclick="selectButton(this)">3Bet</button>
+            <button onclick="selectButton(this)">4Bet</button>
+        </div>
+        <div class="button-group" id="group3">
+            <button onclick="selectButton(this)">UTG</button>
+            <button onclick="selectButton(this)">MP</button>
+            <button onclick="selectButton(this)">CO</button>
+            <button onclick="selectButton(this)">BU</button>
+            <button onclick="selectButton(this)">SB</button>
+            <button onclick="selectButton(this)">BB</button>
+        </div>
+        <div class="button-group" id="group4">
+            <button onclick="selectButton(this)">UTG</button>
+            <button onclick="selectButton(this)">MP</button>
+            <button onclick="selectButton(this)">CO</button>
+            <button onclick="selectButton(this)">BU</button>
+            <button onclick="selectButton(this)">SB</button>
+            <button onclick="selectButton(this)">BB</button>
+        </div>
+        <div class="button-group" id="group5">
+            <!-- Dynamically updated buttons will appear here -->
+        </div>
+    </div>
 
     <div class="rowDiv">
         <h2>All Flops</h2>
@@ -141,7 +173,7 @@
                 document.getElementById('header-container').innerHTML = data;
             });
     </script>
-
+    
     <script>
         document.getElementById('fileInput').addEventListener('change', handleFileSelect, false);
         const canvasHeight = 100;
@@ -422,7 +454,7 @@
                 fileMap[selectedKeys].forEach(fileName => {
                     const newButton = document.createElement('button');
                     newButton.textContent = fileName;
-                    newButton.onclick = function () {fetchLocalCSVFile(fileName);};
+                    newButton.onclick = function () { fetchLocalCSVFile(fileName); };
 
                     group5.appendChild(newButton);
                 });
@@ -459,8 +491,8 @@
             }
         }
 
-        // URL initialization (Executes immediately since it is at the bottom of the body)
-        function initFromURL() {
+        // URL initialization
+        window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const keyParam = urlParams.get('key');
 
@@ -483,10 +515,7 @@
             if (firstGroup5Btn && firstGroup5Btn.textContent !== 'No files') {
                 firstGroup5Btn.click();
             }
-        }
-
-        // Run the setup
-        initFromURL();
+        });
     </script>
 </body>
 
