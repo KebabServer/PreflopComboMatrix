@@ -380,7 +380,7 @@
                 'R12bb/F': '#0011a7ff',
                 'R13bb/F': '#0011a7ff',
                 'R7.5bb/F': '#0011a7ff',
-                
+
 
                 'Call': '#027c08ff',
                 'R2.25bb/C': '#027c08ff',
@@ -527,10 +527,18 @@
                         cell.dataset.pos2 = positions[j];
                         cell.dataset.spot = "3Bet";
                     } else if (container === document.getElementById('matrix-4bet')) {
-                        cell.textContent = content[i * cols + j] || '';
-                        cell.dataset.pos1 = positions[i];
-                        cell.dataset.pos2 = positions[j];
-                        cell.dataset.spot = "4Bet";
+                        if (j == 0) {
+                            cell.textContent = content[i * cols + j] || '';
+                            cell.dataset.pos1 = positions[j];
+                            cell.dataset.pos2 = positions[j];
+                            cell.dataset.spot = "2Bet";
+                        } else {
+                            cell.textContent = content[i * cols + j] || '';
+                            cell.dataset.pos1 = positions[i];
+                            cell.dataset.pos2 = positions[j];
+                            cell.dataset.spot = "4Bet";
+                        }
+
                     } else {
                         let hand;
                         if (i < j) {
@@ -639,7 +647,7 @@
                 for (let j = 0; j < positions.length; j++) {
                     if (j % 6 == 0) {
                         positionsVsPositions.push(`v ${positions[i]}`);
-                        positionsVsPositions2.push(`h ${positions[i]}`);
+                        positionsVsPositions2.push(`rfi ${positions[i]}`);
                     } else if (j > i) {
                         positionsVsPositions.push(`${positions[j]}`);
                         positionsVsPositions2.push(`${positions[j]}`);
