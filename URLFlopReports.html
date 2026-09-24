@@ -403,6 +403,13 @@
             'Simple_SRP_SB_BB': ['NL500 Simple 2.5x 3b_GTO BvB SRP - SRP BvB CBet.csv', 'NL500 Simple 2.5x 3b_GTO BvB SRP - SRP BvB vs X.csv', 'NL500 Simple 2.5x 3b_GTO BvB SRP - SRP BvB vs B33.csv', 'NL500 Simple 2.5x 3b_GTO BvB SRP - SRP BvB vs B66.csv', 'NL500 Simple 2.5x 3b_GTO BvB SRP - SRP BvB vs B130.csv'],
         };
 
+        function selectButton(button) {
+            const group = button.parentElement;
+            const buttons = group.querySelectorAll('button');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+            updateGroup5();
+        }
 
         function updateGroup5() {
             const group5 = document.getElementById('group5');
