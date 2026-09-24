@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flop Reports</title>
+    <style>
+        * {
+            font-family: 'Inter';
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            background-color: #141313;
+
+        }
+
+        h2,
+        h3 {
+            margin-top: 2px;
+            color: coral;
+            font-size: x-large;
+        }
+
+        #tooltip {
+            position: absolute;
+            background-color: white;
+            border: 1px solid black;
+            padding: 5px;
+            display: none;
+
+        }
+
+        #tooltip table tr td {
+            width: 60px;
+            text-align: left;
+        }
+
+        .inline-block {
+            display: inline-block;
+        }
+
+        .rowDiv {
+            margin-left: 10px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            margin: 0px;
+        }
+
+        .button-group button {
+            display: block;
+            margin: 0px;
+            padding: 5px;
+            width: 100px;
+            cursor: pointer;
+            color: black;
+        }
+
+        .button-group button.selected {
+            background-color: #007bff;
+            color: white;
+        }
+
+        #group5 button {
+
+            display: block;
+            margin: 0px;
+            padding: 5px;
+            width: 500px;
+            cursor: pointer;
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+     <div id="header-container"></div>
+    
+    <div class="rowDiv">
+        <h2>All Flops</h2>
+        <canvas id="csvCanvas" width="1800" height="115"></canvas>
+    </div>
+    <div class="rowDiv">
+        <div class="inline-block">
+            <h3>Rainbow Disconnected</h3>
+            <canvas id="csvCanvasRainbowDisconnected" width="1360" height="115"></canvas>
+        </div>
+        <div class="inline-block">
+            <h3>Rainbow Connected</h3>
+            <canvas id="csvCanvasRainbowConnected" width="420" height="115"></canvas>
+        </div>
+    </div>
+    <div class="rowDiv">
+        <div class="inline-block">
+            <h3>Two-Tone Disconnected</h3>
+            <canvas id="csvCanvasTwotoneDisconnected" width="1360" height="115"></canvas>
+        </div>
+        <div class="inline-block">
+            <h3>Two-Tone Connected</h3>
+            <canvas id="csvCanvasTwotoneConnected" width="420" height="115"></canvas>
+        </div>
+    </div>
+    <div class="rowDiv">
+        <div class="inline-block">
+            <h3>Monotone</h3>
+            <canvas id="csvCanvasMonotone" width="1180" height="115"></canvas>
+        </div>
+        <div class="inline-block">
+            <h3>Trips</h3>
+            <canvas id="csvCanvasPairedTrips" width="150" height="115"></canvas>
+        </div>
+    </div>
+    <div class="rowDiv">
+        <div class="inline-block">
+            <h3>Paired Rainbow (Sorted by Middle Card)</h3>
+            <canvas id="csvCanvasPairedRainbow" width="810" height="115"></canvas>
+        </div>
+        <div class="inline-block">
+            <h3>Paired Two-Tone (Sorted by Middle Card)</h3>
+            <canvas id="csvCanvasPairedTwotone" width="810" height="115"></canvas>
+        </div>
+    </div>
+
+    <div id="tooltip"></div>
+
+    <script>
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+            });
+    </script>
+    
+    <script>
+        document.getElementById('fileInput').addEventListener('change', handleFileSelect, false);
+        const canvasHeight = 100;
+
+        const possibleHeaders = ['Fold', 'Call', 'Check', 'B33', 'B66', 'B130', 'R35', 'R55', 'R83', 'R120', 'R50', 'R100', 'R150', 'AI'];
+        const order = 'AKQJT98765432';
+        const setCards = ['A', 'K', 'Q', 'J', 'T', '9'];
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+                const csvData = event.target.result;
+                parseDataFromCSV(csvData, file.name);
+            };
+
+            reader.readAsText(file);
+        }
+
+        function parseDataFromCSV(csvData, fileName) {
+            const parsedData = parseCSV(csvData, false);
+            const parsedDataMiddleCardSort = parseCSV(csvData, true);
+            drawCanvas(document.getElementById('csvCanvas'), parsedData, [], true, 1);
+            drawCanvas(document.getElementById('csvCanvasRainbowDisconnected'), parsedData, ['nopair', 'rainbow', 'disconnected'], true, 6);
+            drawCanvas(document.getElementById('csvCanvasRainbowConnected'), parsedData, ['nopair', 'rainbow', 'connected'], true, 6);
+            drawCanvas(document.getElementById('csvCanvasTwotoneDisconnected'), parsedData, ['nopair', 'twotone', 'disconnected'], true, 2);
+            drawCanvas(document.getElementById('csvCanvasTwotoneConnected'), parsedData, ['nopair', 'twotone', 'connected'], true, 2);
+            drawCanvas(document.getElementById('csvCanvasMonotone'), parsedData, ['monotone'], true, 4);
+            drawCanvas(document.getElementById('csvCanvasPairedRainbow'), parsedDataMiddleCardSort, ['paired', 'rainbow'], false, 5);
+            drawCanvas(document.getElementById('csvCanvasPairedTwotone'), parsedDataMiddleCardSort, ['paired', 'twotone'], false, 5);
+            drawCanvas(document.getElementById('csvCanvasPairedTrips'), parsedData, ['trips'], true, 10);
+        }
+
+        function parseCSV(csv, sortByMiddleCard) {
+            const rows = csv.split('\n').map(row => row.split(','));
+            const headers = rows[0];
+
+            const flopIndex = Math.max(headers.indexOf('flop'), headers.indexOf('flop\r'));
+            const ipEVIndex = Math.max(headers.indexOf('ip_ev'), headers.indexOf('ip_ev\r'));
+            const oopEVIndex = Math.max(headers.indexOf('oop_ev'), headers.indexOf('oop_ev\r'));
+
+            const indices = {};
+            possibleHeaders.forEach(header => {
+                const index = headers.indexOf(header);
+                if (index !== -1) {
+                    indices[header] = index;
+                }
+            });
+
+            const data = rows.slice(1).map(row => {
+                const theFlop = row[flopIndex].replace('\r', '');
+                const dataObj = {};
+                Object.keys(indices).forEach(header => {
+                    dataObj[header] = row[indices[header]].includes('%') ? parseFloat(row[indices[header]].replace('%', '')) : parseFloat(row[indices[header]] * 100);
+                });
+                dataObj.flop = theFlop;
+                dataObj.ipEV = row[ipEVIndex].replace('\r', '');
+                dataObj.oopEV = row[oopEVIndex].replace('\r', '');
+                dataObj.monotone = (theFlop[1] == theFlop[3] && theFlop[1] == theFlop[5]);
+                dataObj.twotone = (theFlop[1] == theFlop[3] && theFlop[1] != theFlop[5]) || (theFlop[1] == theFlop[5] && theFlop[1] != theFlop[3]) || (theFlop[3] == theFlop[5] && theFlop[1] != theFlop[3]);
+                dataObj.rainbow = (theFlop[1] != theFlop[3] && theFlop[1] != theFlop[5] & theFlop[3] != theFlop[5]);
+                dataObj.trips = (theFlop[0] == theFlop[2] && theFlop[2] == theFlop[4]);
+                dataObj.paired = (theFlop[0] == theFlop[2] && theFlop[0] != theFlop[4]) || (theFlop[0] == theFlop[4] && theFlop[0] != theFlop[2]) || (theFlop[2] == theFlop[4] && theFlop[0] != theFlop[2]);
+                dataObj.nopair = (theFlop[0] != theFlop[2] && theFlop[2] != theFlop[4]);
+                dataObj.connected = hasStraightPossibility(theFlop);
+                dataObj.disconnected = !hasStraightPossibility(theFlop);
+                return dataObj;
+            });
+
+            const orderMap = {};
+            for (let i = 0; i < order.length; i++) {
+                orderMap[order[i]] = i;
+            }
+
+            function getOrderIndex(char) {
+                return orderMap[char] !== undefined ? orderMap[char] : -1;
+            }
+
+            function padIndex(index) {
+                return index.toString().padStart(2, '0');
+            }
+
+            if (sortByMiddleCard) {
+                data.sort((a, b) => {
+                    const aKey = `${padIndex(getOrderIndex(a.flop[2]))}${padIndex(getOrderIndex(a.flop[0]))}${padIndex(getOrderIndex(a.flop[4]))}`;
+                    const bKey = `${padIndex(getOrderIndex(b.flop[2]))}${padIndex(getOrderIndex(b.flop[0]))}${padIndex(getOrderIndex(b.flop[4]))}`;
+                    return aKey.localeCompare(bKey);
+                });
+            } else {
+                data.sort((a, b) => {
+                    const aKey = `${padIndex(getOrderIndex(a.flop[0]))}${padIndex(getOrderIndex(a.flop[2]))}${padIndex(getOrderIndex(a.flop[4]))}`;
+                    const bKey = `${padIndex(getOrderIndex(b.flop[0]))}${padIndex(getOrderIndex(b.flop[2]))}${padIndex(getOrderIndex(b.flop[4]))}`;
+                    return aKey.localeCompare(bKey);
+                });
+            }
+
+            return data;
+        }
+
+        const colorConfig = {
+            Check: 'green',
+            Fold: 'dodgerblue',
+            Call: 'Green',
+            B33: 'orange',
+            B66: 'red',
+            B130: 'purple',
+            AI: 'blue',
+            R35: 'rgb(255, 132, 132)',
+            R55: 'rgb(252, 96, 96)',
+            R83: 'rgb(252, 68, 68)',
+            R120: 'rgb(255, 0, 0)',
+            R50: 'rgb(252, 96, 96)',
+            R100: 'rgb(252, 68, 68)',
+            R150: 'rgb(255, 0, 0)',
+        };
+
+        function drawCanvas(canvas, data, properties, drawHighCard, colWidth) {
+            const ctx = canvas.getContext('2d');
+            canvas.tooltipData = [];
+
+            let currentFirstLetter = '';
+            let x = 0;
+            data.forEach((row) => {
+                let drawRow = true;
+                properties.forEach(property => {
+                    if (!row[property]) {
+                        drawRow = false;
+                    }
+                });
+                if (drawRow) {
+                    const firstLetter = drawHighCard ? row.flop[0] : row.flop[2];
+                    if (firstLetter !== currentFirstLetter && currentFirstLetter != '') {
+                        ctx.fillStyle = 'white';
+                        ctx.font = '14px Arial';
+                        ctx.fillText(firstLetter, x, canvasHeight + 14);
+
+                        ctx.fillRect(x, 0, 1, canvasHeight);
+                        ctx.fillStyle = 'white';
+                        canvas.tooltipData[x] = firstLetter + "-high boards";
+                        x++;
+                    }
+                    currentFirstLetter = firstLetter;
+
+                    let currentHeight = canvasHeight;
+                    let toolTipTextTemp = "<tr><td>Flop:</td><td>" + row.flop + "</td></tr> <tr><td>IP EV:</td><td>" + parseFloat(row.ipEV).toFixed(2) + "</td></tr> <tr><td>OOP EV:</td><td>" + parseFloat(row.oopEV).toFixed(2) + "</td></tr>";
+
+                    for (let index = possibleHeaders.length - 1; 0 <= index; index--) {
+                        const header = possibleHeaders[index];
+                        if (typeof row[header] !== 'undefined') {
+                            ctx.fillStyle = colorConfig[header];
+                            const headerHeight = row[header] / 100 * canvasHeight;
+                            currentHeight -= headerHeight;
+                            ctx.fillRect(x, currentHeight, colWidth, headerHeight);
+                            toolTipTextTemp += "<tr><td>" + header + "</td><td>" + row[header].toFixed(1) + "%</td></tr>";
+                        }
+                    }
+                    let nextX = x;
+                    while (nextX < x + colWidth) {
+                        canvas.tooltipData[nextX] = toolTipTextTemp;
+                        nextX++;
+                    }
+
+                    x += colWidth;
+                }
+            });
+            ctx.fillStyle = 'black';
+            ctx.font = '18px Arial';
+            addHoverEffect(data, canvas);
+        }
+
+        function addHoverEffect(data, canvas) {
+            const tooltip = document.getElementById('tooltip');
+
+            canvas.addEventListener('mousemove', function (event) {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const index = Math.floor(x);
+
+                if (index >= 0 && index < data.length) {
+                    const row = data[index];
+                    tooltip.style.color = 'black';
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = `${event.clientX + 10}px`;
+                    tooltip.style.top = `${event.clientY + 10}px`;
+                    tooltip.innerHTML = `<table>${canvas.tooltipData[x]}</table>`;
+                } else {
+                    tooltip.style.display = 'none';
+                }
+            });
+
+            canvas.addEventListener('mouseout', function () {
+                tooltip.style.display = 'none';
+            });
+        }
+
+        function hasStraightPossibility(flop) {
+            const ranks = flop.split('').filter((_, index) => index % 2 === 0);
+            const rankValues = ranks.map(rank => {
+                switch (rank) {
+                    case 'A': return 14;
+                    case 'K': return 13;
+                    case 'Q': return 12;
+                    case 'J': return 11;
+                    case 'T': return 10;
+                    default: return parseInt(rank);
+                }
+            });
+
+            rankValues.sort((a, b) => a - b);
+
+            const possibleStraights = [
+                [2, 3, 4, 5, 14],
+                [2, 3, 4, 5, 6],
+                [3, 4, 5, 6, 7],
+                [4, 5, 6, 7, 8],
+                [5, 6, 7, 8, 9],
+                [6, 7, 8, 9, 10],
+                [7, 8, 9, 10, 11],
+                [8, 9, 10, 11, 12],
+                [9, 10, 11, 12, 13],
+                [10, 11, 12, 13, 14]
+            ];
+
+            for (const straight of possibleStraights) {
+                const match = straight.filter(value => rankValues.includes(value)).length >= 3;
+                if (match) return true;
+            }
+
+            return false;
+        }
+
+        const fileMap = {
+            //Simple
+            //3Bet IP
+            'Simple_3Bet_CO_BU': ['NL500 Simple 2.5x 3b_GTO 3Bet IP - 3Bet CO vs BU.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet IP vs Cbet - 3Bet CO vs BU vs B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet IP vs Cbet - 3Bet CO vs BU vs B66.csv'],
+            'Simple_3Bet_MP_BU': ['NL500 Simple 2.5x 3b_GTO 3Bet IP - 3Bet MP vs BU.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet IP vs Cbet - 3Bet MP vs BU vs B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet IP vs Cbet - 3Bet CO vs BU vs B66.csv'],
+            'Simple_3Bet_MP_CO': ['NL500 Simple 2.5x 3b_GTO 3Bet IP - 3Bet MP vs CO.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet IP vs Cbet - 3Bet MP vs CO vs B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet IP vs Cbet - 3Bet CO vs BU vs B66.csv'],
+            'Simple_3Bet_UTG_BU': ['NL500 Simple 2.5x 3b_GTO 3Bet IP - 3Bet UTG vs BU.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet IP vs Cbet - 3Bet UTG vs BU vs B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet IP vs Cbet - 3Bet CO vs BU vs B66.csv'],
+            'Simple_3Bet_UTG_CO': ['NL500 Simple 2.5x 3b_GTO 3Bet IP - 3Bet UTG vs CO.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet IP vs Cbet - 3Bet UTG vs CO vs B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet IP vs Cbet - 3Bet CO vs BU vs B66.csv'],
+            'Simple_3Bet_UTG_MP': ['NL500 Simple 2.5x 3b_GTO 3Bet IP - 3Bet UTG vs MP.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet IP vs Cbet - 3Bet UTG vs MP vs B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet IP vs Cbet - 3Bet CO vs BU vs B66.csv'],
+            //3Bet OOP
+            'Simple_3Bet_UTG_BB': ['NL500 Simple 2.5x 3b_GTO 3Bet OOP BB - 3Bet UTG vs BB.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP BB vs Cbet - UTG vs BB vs B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP BB vs Cbet - UTG vs BB vs B66.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP BB vs Check - UTG vs BB vs Check.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP BB vs Check - UTG vs BB vs X B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP BB vs Check - UTG vs BB vs X B66.csv'],
+            'Simple_3Bet_MP_BB': ['NL500 Simple 2.5x 3b_GTO 3Bet OOP BB - 3Bet MP vs BB.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP BB vs Cbet - MP vs BB vs B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP BB vs Cbet - MP vs BB vs B66.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP BB vs Check - MP vs BB vs Check.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP BB vs Check - MP vs BB vs X B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP BB vs Check - MP vs BB vs X B66.csv'],
+            'Simple_3Bet_CO_BB': ['NL500 Simple 2.5x 3b_GTO 3Bet OOP BB - 3Bet CO vs BB.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP BB vs Cbet - CO vs BB vs B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP BB vs Cbet - CO vs BB vs B66.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP BB vs Check - CO vs BB vs Check.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP BB vs Check - CO vs BB vs X B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP BB vs Check - CO vs BB vs X B66.csv'],
+            'Simple_3Bet_BU_BB': ['NL500 Simple 2.5x 3b_GTO 3Bet OOP BB - 3Bet BU vs BB.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP BB vs Cbet - BU vs BB vs B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP BB vs Cbet - BU vs BB vs B66.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP BB vs Check - BU vs BB vs Check.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP BB vs Check - BU vs BB vs X B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP BB vs Check - BU vs BB vs X B66.csv'],
+            'Simple_3Bet_UTG_SB': ['NL500 Simple 2.5x 3b_GTO 3Bet OOP SB - 3Bet UTG vs SB.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP SB vs Cbet - UTG vs SB vs B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP SB vs Cbet - UTG vs SB vs B66.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP SB vs Check - UTG vs SB vs Check.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP SB vs Check - UTG vs SB vs X B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP SB vs Check - UTG vs SB vs X B66.csv'],
+            'Simple_3Bet_MP_SB': ['NL500 Simple 2.5x 3b_GTO 3Bet OOP SB - 3Bet MP vs SB.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP SB vs Cbet - MP vs SB vs B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP SB vs Cbet - MP vs SB vs B66.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP SB vs Check - MP vs SB vs Check.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP SB vs Check - MP vs SB vs X B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP SB vs Check - MP vs SB vs X B66.csv'],
+            'Simple_3Bet_CO_SB': ['NL500 Simple 2.5x 3b_GTO 3Bet OOP SB - 3Bet CO vs SB.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP SB vs Cbet - CO vs SB vs B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP SB vs Cbet - CO vs SB vs B66.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP SB vs Check - CO vs SB vs Check.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP SB vs Check - CO vs SB vs X B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP SB vs Check - CO vs SB vs X B66.csv'],
+            'Simple_3Bet_BU_SB': ['NL500 Simple 2.5x 3b_GTO 3Bet OOP SB - 3Bet BU vs SB.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP SB vs Cbet - BU vs SB vs B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP SB vs Cbet - BU vs SB vs B66.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP SB vs Check - BU vs SB vs Check.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP SB vs Check - BU vs SB vs X B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet OOP SB vs Check - BU vs SB vs X B66.csv'],
+            //3Bet BvB
+            'Simple_3Bet_SB_BB': ['NL500 Simple 2.5x 3b_GTO BvB 3Bet - BvB 3Bet Cbet.csv', 'NL500 Simple 2.5x 3b_GTO BvB 3Bet - BvB 3Bet vs B33.csv', 'NL500 Simple 2.5x 3b_GTO BvB 3Bet - BvB 3Bet vs B66.csv'],
+            //SRP IP
+            'Simple_SRP_UTG_BB': ['NL500 Simple 2.5x 3b_GTO SRP - SRP UTG vs BB.csv', 'NL500 Simple 2.5x 3b_GTO SRP vs CBet - SRP UTG vs BB vs B33.csv', 'NL500 Simple 2.5x 3b_GTO SRP vs CBet - SRP UTG vs BB vs B66.csv'],
+            'Simple_SRP_MP_BB': ['NL500 Simple 2.5x 3b_GTO SRP - SRP MP vs BB.csv', 'NL500 Simple 2.5x 3b_GTO SRP vs CBet - SRP MP vs BB vs B33.csv', 'NL500 Simple 2.5x 3b_GTO SRP vs CBet - SRP MP vs BB vs B66.csv'],
+            'Simple_SRP_CO_BB': ['NL500 Simple 2.5x 3b_GTO SRP - SRP CO vs BB.csv', 'NL500 Simple 2.5x 3b_GTO SRP vs CBet - SRP CO vs BB vs B33.csv', 'NL500 Simple 2.5x 3b_GTO SRP vs CBet - SRP CO vs BB vs B66.csv'],
+            'Simple_SRP_BU_BB': ['NL500 Simple 2.5x 3b_GTO SRP - SRP BU vs BB.csv', 'NL500 Simple 2.5x 3b_GTO SRP vs CBet - SRP BTN vs BB vs B33.csv', 'NL500 Simple 2.5x 3b_GTO SRP vs CBet - SRP BTN vs BB vs B66.csv'],
+            //SRP BvB
+            'Simple_SRP_SB_BB': ['NL500 Simple 2.5x 3b_GTO BvB SRP - SRP BvB CBet.csv', 'NL500 Simple 2.5x 3b_GTO BvB SRP - SRP BvB vs X.csv', 'NL500 Simple 2.5x 3b_GTO BvB SRP - SRP BvB vs B33.csv', 'NL500 Simple 2.5x 3b_GTO BvB SRP - SRP BvB vs B66.csv', 'NL500 Simple 2.5x 3b_GTO BvB SRP - SRP BvB vs B130.csv'],
+        };
+
+
+        function updateGroup5() {
+            const group5 = document.getElementById('group5');
+            group5.innerHTML = '';
+
+            const selectedButtons = document.querySelectorAll('.button-group button.selected');
+            const selectedKeys = Array.from(selectedButtons).map(button => button.textContent).join('_');
+
+            if (fileMap[selectedKeys]) {
+                fileMap[selectedKeys].forEach(fileName => {
+                    const newButton = document.createElement('button');
+                    newButton.textContent = fileName;
+                    newButton.onclick = function () { fetchLocalCSVFile(fileName); };
+
+                    group5.appendChild(newButton);
+                });
+            } else {
+                const newButton = document.createElement('button');
+                newButton.textContent = 'No files';
+                group5.appendChild(newButton);
+            }
+        }
+
+        function fetchLocalCSVFile(fileName) {
+            fetch('./CSVs/' + fileName)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    parseDataFromCSV(data, fileName);
+                })
+                .catch(error => {
+                    console.error('Error fetching CSV file:', error);
+                });
+        }
+
+        function selectButtonByText(groupId, text) {
+            const group = document.getElementById(groupId);
+            if (!group || !text) return;
+            const buttons = Array.from(group.querySelectorAll('button'));
+            const targetBtn = buttons.find(btn => btn.textContent.trim().toLowerCase() === text.trim().toLowerCase());
+            if (targetBtn) {
+                selectButton(targetBtn);
+            }
+        }
+
+        // URL initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const keyParam = urlParams.get('key');
+
+            if (keyParam && fileMap[keyParam]) {
+                const parts = keyParam.split('_');
+                if (parts.length === 4) {
+                    selectButtonByText('group1', parts[0]);
+                    selectButtonByText('group2', parts[1]);
+                    selectButtonByText('group3', parts[2]);
+                    selectButtonByText('group4', parts[3]);
+                }
+            } else {
+                selectButtonByText('group1', urlParams.get('mode') || urlParams.get('g1') || 'Simple');
+                selectButtonByText('group2', urlParams.get('type') || urlParams.get('g2') || '3Bet');
+                selectButtonByText('group3', urlParams.get('pos1') || urlParams.get('g3') || 'MP');
+                selectButtonByText('group4', urlParams.get('pos2') || urlParams.get('g4') || 'CO');
+            }
+
+            const firstGroup5Btn = document.getElementById('group5').querySelector('button');
+            if (firstGroup5Btn && firstGroup5Btn.textContent !== 'No files') {
+                firstGroup5Btn.click();
+            }
+        });
+    </script>
+</body>
+
+</html>
