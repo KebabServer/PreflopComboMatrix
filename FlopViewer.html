@@ -756,8 +756,6 @@
                         y = cardString.indexOf(hand.charAt(2));
                     }
 
-                    let maxEVforHand = 0;
-
                     let grandientX = 0;
                     let radientStr = "";
                     let betsizeStr = "";
@@ -765,8 +763,6 @@
                         //Freq
                         let freq = parseFloat(line[j]);
 
-                        //Calculate highest ev line for hand
-                        maxEVforHand = Math.max(maxEVforHand, parseFloat(line[colors.length + j]));
                         //Handclass
                         let madeHandClass = madeHandClassArray[cardOrder.indexOf(hand)];
                         let drawingHandClass = drawingHandClassArray[cardOrder.indexOf(hand)];
@@ -781,10 +777,10 @@
                         radientStr += colors[j - 1] + " " + grandientX + "% " + (grandientX + freq) + "%,";
                         grandientX += freq;
 
-                        betsizeStr += "<div class=tooltipbetsize>" + freq.toFixed(1) + "%</div>"
+                        betsizeStr += "<div class=tooltipbetsize>Freq: " + freq.toFixed(1) + "% - EV: " + parseFloat(line[colors.length + j]) + "</div>"
 
                     }
-                    colorsf_multi_tooltip_temp[x][y] += "<div class=tooltipHandDiv style='color:black; background-image:linear-gradient(to right, " + radientStr + " gray " + grandientX + "% 100%);'>" + "<div class=tooltipdivider><div class=tooltipHandBackground>" + colorHand(hand) + "</div> <div class=tooltipEV>EV: " + maxEVforHand.toFixed(1) + "%</div></div><div>" + betsizeStr + "</div> </div>";
+                    colorsf_multi_tooltip_temp[x][y] += "<div class=tooltipHandDiv style='color:black; background-image:linear-gradient(to right, " + radientStr + " gray " + grandientX + "% 100%);'>" + "<div class=tooltipdivider><div class=tooltipHandBackground>" + colorHand(hand) + "</div> </div><div>" + betsizeStr + "</div> </div>";
 
                 }
 
