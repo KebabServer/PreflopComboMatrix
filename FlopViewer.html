@@ -761,7 +761,7 @@
                     let betsizeStr = "";
                     for (let j = 1; j < colors.length + 1; j++) {
                         //Freq
-                        let freq = Number(Number(parseFloat(line[j])).toFixed(2));
+                        let freq = parseFloat(line[j]);
 
                         //Handclass
                         let madeHandClass = madeHandClassArray[cardOrder.indexOf(hand)];
