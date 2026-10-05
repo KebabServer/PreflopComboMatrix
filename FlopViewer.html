@@ -761,7 +761,7 @@
                     let betsizeStr = "";
                     for (let j = 1; j < colors.length + 1; j++) {
                         //Freq
-                        let freq = parseFloat(line[j]);
+                        let freq = Number(Number(parseFloat(line[j])).toFixed(2));
 
                         //Handclass
                         let madeHandClass = madeHandClassArray[cardOrder.indexOf(hand)];
@@ -772,18 +772,18 @@
                         counts.set(drawingHandClass + " " + colors[j - 1], (counts.get(drawingHandClass + " " + colors[j - 1]) || 0) + freq / 100 * preflopRange[cardOrder.indexOf(hand)]);
                         counts.set(drawingHandClass, (counts.get(drawingHandClass) || 0) + freq / 100 * preflopRange[cardOrder.indexOf(hand)]);
 
-                        colorsf_multi[x][y][j - 1] += Number(freq).toFixed(1);
+                        colorsf_multi[x][y][j - 1] += freq;
 
-                        radientStr += colors[j - 1] + " " + grandientX + "% " + (grandientX + Number(freq).toFixed(1)) + "%,";
-                        grandientX += Number(freq).toFixed(1);
+                        radientStr += colors[j - 1] + " " + grandientX + "% " + (grandientX + freq) + "%,";
+                        grandientX += freq;
 
-                        betsizeStr += "<div class=tooltipbetsize style=\"background-color: " + colors[j - 1] + "; border: 1px solid black;\">  " + Number(freq).toFixed(1) + "% EV: " + parseFloat(line[colors.length + j]).toFixed(1) + "  </div>"
-                        
+                        betsizeStr += "<div class=tooltipbetsize style=\"background-color: " + colors[j - 1] + "; border: 1px solid black;\">  " + freq.toFixed(1) + "% EV: " + parseFloat(line[colors.length + j]).toFixed(1) + "  </div>"
+
                     }
                     colorsf_multi_tooltip_temp[x][y] += "<div class=tooltipHandDiv style='color:black; background-image:linear-gradient(to right, " + radientStr + " gray " + grandientX + "% 100%);'>" + "<div class=tooltipdivider><div class=tooltipHandBackground>" + colorHand(hand) + "</div> </div><div>" + betsizeStr + "</div> </div>";
-                    
+
                 }
-                console.log(colorsf_multi_tooltip_temp);
+
                 for (let n = 0; n < colors.length; n++) {
                     for (let x = 0; x < 13; x++) {
                         for (let y = 0; y < 13; y++) {
