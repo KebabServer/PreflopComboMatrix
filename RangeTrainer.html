@@ -469,10 +469,25 @@
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 if (!ranges) return;
 
-                const colorsf_multi = Array.from({ length: 13 }, () => Array.from({ length: 13 }, () => Array(actions.length).fill(0)));
+                const rangeCount = ranges.length;
+                const colorsf_multi = Array.from(
+                    { length: 13 },
+                    () => Array.from(
+                        { length: 13 },
+                        () => Array(rangeCount).fill(0)
+                    )
+                );
+
+                // Aggregate every loaded range independently.  Using ranges.length
+                // here (rather than actions.length) keeps the renderer in sync with
+                // the actual Range1, Range2, ... data, including 4+ ranges.
                 for (let i = 0; i < 1326; i++) {
-                    for (let j = 0; j < ranges.length; j++) {
-                        colorsf_multi[cardOrderX[i]][cardOrderY[i]][j] += parseFloat(ranges[j][i]);
+                    const x = cardOrderX[i];
+                    const y = cardOrderY[i];
+
+                    for (let j = 0; j < rangeCount; j++) {
+                        const value = Number.parseFloat(ranges[j]?.[i]);
+                        colorsf_multi[x][y][j] += Number.isFinite(value) ? value : 0;
                     }
                 }
 
@@ -485,10 +500,17 @@
                         ctx.strokeStyle = 'black';
                         ctx.lineWidth = 1; // Set border thickness
                         ctx.strokeRect(j * size, i * size, size, size);
-                        for (let k = 0; k < actions.length; k++) {
+                        for (let k = 0; k < rangeCount; k++) {
                             const tempWidth = colorsf_multi[i][j][k] / heightsMax[i][j];
+                            if (tempWidth <= 0) continue;
+
                             ctx.fillStyle = getActionColor(actions[k]);
-                            ctx.fillRect(x + 1 + Math.ceil(tempX * (size - 2)), y + 1, Math.ceil((size - 2) * tempWidth), (size - 2));
+                            ctx.fillRect(
+                                x + 1 + Math.ceil(tempX * (size - 2)),
+                                y + 1,
+                                Math.ceil((size - 2) * tempWidth),
+                                (size - 2)
+                            );
                             tempX += tempWidth;
                         }
 
