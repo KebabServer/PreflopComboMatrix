@@ -761,8 +761,8 @@
                     let betsizeStr = "";
                     for (let j = 1; j < colors.length + 1; j++) {
                         //Freq
-                        let freq = parseFloat(line[j]);
-                        freq = freq.toFixed(1);
+                        let rawVal = parseFloat(line[j]).toFixed(1);
+                        freq = Number.isNaN(rawVal) ? 0 : Number(rawVal.toFixed(1));
                         //Handclass
                         let madeHandClass = madeHandClassArray[cardOrder.indexOf(hand)];
                         let drawingHandClass = drawingHandClassArray[cardOrder.indexOf(hand)];
