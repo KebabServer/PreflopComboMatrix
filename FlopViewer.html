@@ -732,7 +732,7 @@
 
                 let preflopCombos = 0;
                 for (let i = 0; i < 1326; i++) {
-                    preflopMax[cardOrderX[i]][cardOrderY[i]] = parseFloat(preflopRange[i]);
+                    preflopMax[cardOrderX[i]][cardOrderY[i]] += parseFloat(preflopRange[i])/heightsMax[cardOrderX[i]][cardOrderY[i]];
                     preflopCombos += parseFloat(preflopRange[i]);
                 }
 
