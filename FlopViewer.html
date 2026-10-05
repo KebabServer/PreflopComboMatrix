@@ -777,7 +777,7 @@
                         radientStr += colors[j - 1] + " " + grandientX + "% " + (grandientX + freq) + "%,";
                         grandientX += freq;
 
-                        betsizeStr += "<div class=tooltipbetsize style=\"background-color: " + colors[j - 1] + "; border: 1px solid black;\">  " + freq.toFixed(1) + "% - EV: " + parseFloat(line[colors.length + j]).toFixed(1) + "  </div>"
+                        betsizeStr += "<div class=tooltipbetsize style=\"background-color: " + colors[j - 1] + "; border: 1px solid black;\">  " + freq.toFixed(1) + "% EV: " + parseFloat(line[colors.length + j]).toFixed(1) + "  </div>"
 
                     }
                     colorsf_multi_tooltip_temp[x][y] += "<div class=tooltipHandDiv style='color:black; background-image:linear-gradient(to right, " + radientStr + " gray " + grandientX + "% 100%);'>" + "<div class=tooltipdivider><div class=tooltipHandBackground>" + colorHand(hand) + "</div> </div><div>" + betsizeStr + "</div> </div>";
