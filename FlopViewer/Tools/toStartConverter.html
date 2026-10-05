@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Replace Line Breaks with Stars</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    textarea {
+      width: 100%;
+      height: 120px;
+      margin-bottom: 12px;
+      box-sizing: border-box;
+      padding: 8px;
+    }
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    button {
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .output-container {
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Replace Line Breaks with (*)</h2>
+
+  <label for="inputText"><strong>Paste text here:</strong></label><br>
+  <textarea id="inputText" placeholder="Paste your text with multiple lines..."></textarea><br>
+
+  <div class="button-group">
+    <button onclick="transformText()">Convert Text</button>
+    <button onclick="importAndConvert()">Import & Convert from Clipboard</button>
+  </div>
+
+  <div class="output-container">
+    <label for="outputText"><strong>Result:</strong></label><br>
+    <textarea id="outputText" readonly placeholder="Result will appear here..."></textarea><br>
+    <button onclick="copyToClipboard()">Copy Result</button>
+  </div>
+
+  <script>
+    function replaceLineBreaks(str) {
+      // Split text into lines handling Windows (\r\n), Unix (\n), and Mac (\r) line breaks
+      let lines = str.split(/\r?\n|\r/);
+
+      // Remove the first line
+      if (lines.length > 0) {
+        lines.shift();
+      }
+
+      // Remove trailing empty line if text ended with a line break
+      if (lines.length > 0 && lines[lines.length - 1] === '') {
+        lines.pop();
+      }
+
+      // Join the remaining lines with a star
+      return lines.join('*');
+    }
+
+    function transformText() {
+      const input = document.getElementById('inputText').value;
+      const result = replaceLineBreaks(input);
+      document.getElementById('outputText').value = result;
+    }
+
+    async function importAndConvert() {
+      try {
+        const text = await navigator.clipboard.readText();
+        document.getElementById('inputText').value = text;
+        const result = replaceLineBreaks(text);
+        document.getElementById('outputText').value = result;
+      } catch (err) {
+        alert('Failed to read from clipboard. Please allow clipboard access permissions.');
+      }
+    }
+
+    async function copyToClipboard() {
+      const outputText = document.getElementById('outputText').value;
+      if (!outputText) return;
+
+      try {
+        await navigator.clipboard.writeText(outputText);
+        alert('Copied to clipboard!');
+      } catch (err) {
+        alert('Failed to copy to clipboard.');
+      }
+    }
+  </script>
+
+</body>
+</html>
