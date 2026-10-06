@@ -121,6 +121,7 @@
             grid-column-start: 9;
             grid-column-end: 12;
             margin: 0px;
+            font-size: clamp(10px, 4cqw, 1.25rem);
         }
 
 
@@ -128,7 +129,7 @@
             text-align: center;
             background-color: white;
             vertical-align: middle;
-            font-size: clamp(10px, 4cqw, 1.25rem);
+            
         }
 
         .range-switch-div {
@@ -396,7 +397,7 @@
             const suitChar = card.slice(-1);
             const {symbol = '', color = 'inherit'} = SUIT_MAP[suitChar] || {};
 
-            return `<span class="matrixboard-card" style="color: ${color};">${rank}${symbol}</span>`;
+            return `<span style="color: ${color};">${rank}${symbol}</span>`;
         }
 
         function colorHand(hand) {
