@@ -847,16 +847,11 @@
             const mouseY = event.clientY;
 
             // 1. Calculate ideal viewport-relative coordinates
-            let left = mouseX + offset;
+            let left = offset;
             let top = offset;
 
-            // Flip to left if overflowing right edge
-            if (left + tooltipWidth > viewportWidth) {
-                left = mouseX - tooltipWidth - offset;
-            }
-
             // Flop to bottom if 
-            if (top < viewportHeight / 2) {
+            if (mouseY < viewportHeight / 2) {
                 top = viewportHeight / 2 + offset;
             }
 
