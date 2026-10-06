@@ -118,44 +118,18 @@
             background-color: white;
             text-align: center;
             font-weight: bold;
-            grid-column-start: 10;
+            grid-column-start: 9;
             grid-column-end: 12;
         }
 
 
         .matrixboard-card {
-            border: 2px solid #8a8a8a;
-            border-radius: 5px;
+            /* border: 2px solid #8a8a8a;
+            border-radius: 5px; */
             text-align: center;
             background-color: white;
             vertical-align: middle;
-        }
-
-        .matrixboard-card::before {
-            content: attr(data-rank);
-            position: middle;
-            font-size: 30px;
-        }
-
-        .matrixboard-card[data-suit="x"] {
-            color: black;
-            font-weight: bold;
-        }
-
-        .matrixboard-card[data-suit="♠"] {
-            color: black;
-        }
-
-        .matrixboard-card[data-suit="♣"] {
-            color: rgb(0, 148, 7);
-        }
-
-        .matrixboard-card[data-suit="♥"] {
-            color: red;
-        }
-
-        .matrixboard-card[data-suit="♦"] {
-            color: rgb(0, 3, 204);
+            font-size: 24px;
         }
 
         .range-switch-div {
@@ -410,7 +384,21 @@
         const madeHandClasses = ["Straightflush", "Quads", "Fullhouse", "Flush", "Straight", "Set", "Trips", "Two Pair", "Over Pair", "Top Pair", "Mid Pair", "Bottom Pair", "Under Pair", "Ace High", "King High", "No Made Hand"];
         const drawingHandClasses = ["Combo Draw", "Nut Flush Draw", "Pair And Flush Draw", "Flush Draw", "OESD", "Gutshot", "Ax BDFD 2 Cards", "BDFD 2 Cards", "Ax BDFD 1 Card", "BDFD 1 Card", "No Pair No Draw", "No Draw"];
 
+        const SUIT_MAP = {
+            c: {symbol: '♣', color: '#009407'}, // Green
+            d: {symbol: '♦', color: '#0003cc'}, // Blue
+            h: {symbol: '♥', color: '#dc2626'}, // Red
+            s: {symbol: '♠', color: '#000000'}, // Black
+            x: {symbol: 'x', color: '#000000'}  // Standard fallback
+        };
 
+        function getCardHTML(card) {
+            const rank = card.slice(0, -1);
+            const suitChar = card.slice(-1);
+            const {symbol = '', color = 'inherit'} = SUIT_MAP[suitChar] || {};
+
+            return `<span class="matrixboard-card" style="color: ${color};">${rank}${symbol}</span>`;
+        }
 
         function colorHand(hand) {
             let coloredHand = "";
@@ -872,21 +860,7 @@
         };
 
 
-        const SUIT_MAP = {
-            c: {symbol: '♣', color: '#009407'}, // Green
-            d: {symbol: '♦', color: '#0003cc'}, // Blue
-            h: {symbol: '♥', color: '#dc2626'}, // Red
-            s: {symbol: '♠', color: '#000000'}, // Black
-            x: {symbol: 'x', color: '#000000'}  // Standard fallback
-        };
 
-        function getCardHTML(card) {
-            const rank = card.slice(0, -1);
-            const suitChar = card.slice(-1);
-            const {symbol = '', color = 'inherit'} = SUIT_MAP[suitChar] || {};
-
-            return `<span class="matrixboard-card" style="color: ${color};">${rank}${symbol}</span>`;
-        }
 
     </script>
 </body>
