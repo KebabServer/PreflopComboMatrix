@@ -22,7 +22,6 @@
 
         .tooltip {
             visibility: hidden;
-            width: auto;
             white-space: nowrap;
             background-color: #363434;
             color: #000000;
@@ -35,7 +34,6 @@
         .tooltipTable {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-
         }
 
         .tooltipHandDiv {
@@ -58,11 +56,6 @@
             font-size: 10px;
             padding: 0px;
             height: 1em;
-        }
-
-        .tooltipEV {
-            color: #000000;
-            font-size: 14px;
         }
 
         .tooltipdivider {
@@ -784,23 +777,7 @@
                     }
 
                     // Move the tooltip
-                    const tooltipWidth = tip.offsetWidth;
-                    const tooltipHeight = tip.offsetHeight;
-                    const pageWidth = document.documentElement.clientWidth;
-                    const pageHeight = document.documentElement.clientHeight;
-                    let left = event.pageX + 10;
-                    let top = event.pageY + 10;
-
-                    if (left + tooltipWidth > pageWidth) {
-                        left = event.pageX - tooltipWidth - 10;
-                    }
-
-                    if (top + tooltipHeight > pageHeight) {
-                        top = event.pageY - tooltipHeight - 10;
-                    }
-
-                    tip.style.left = `${left}px`;
-                    tip.style.top = `${top}px`;
+                    positionToolTip(event,tip);
                 });
                 hand_matrix_div.appendChild(tip);
 
@@ -855,7 +832,43 @@
 
 
 
+        function positionTooltip(event, tip) {
+            const offset = 10;
+            const tooltipWidth = tip.offsetWidth;
+            const tooltipHeight = tip.offsetHeight;
 
+            // Viewport dimensions and scroll offsets
+            const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+            const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+            const scrollX = window.scrollX || window.pageXOffset;
+            const scrollY = window.scrollY || window.pageYOffset;
+
+            // Mouse coordinates relative to viewport
+            const mouseX = event.clientX;
+            const mouseY = event.clientY;
+
+            // 1. Calculate ideal viewport-relative coordinates
+            let left = mouseX + offset;
+            let top = mouseY + offset;
+
+            // Flip to left if overflowing right edge
+            if (left + tooltipWidth > viewportWidth) {
+                left = mouseX - tooltipWidth - offset;
+            }
+
+            // Flip to top if overflowing bottom edge
+            if (top + tooltipHeight > viewportHeight) {
+                top = mouseY - tooltipHeight - offset;
+            }
+
+            // 2. Clamp values so tooltip never exits the left/top viewport edges
+            left = Math.max(offset, Math.min(left, viewportWidth - tooltipWidth - offset));
+            top = Math.max(offset, Math.min(top, viewportHeight - tooltipHeight - offset));
+
+            // 3. Apply scroll offset for absolute positioning
+            tip.style.left = `${left + scrollX}px`;
+            tip.style.top = `${top + scrollY}px`;
+        }
     </script>
 </body>
 
