@@ -130,7 +130,7 @@
             text-align: center;
             background-color: white;
             vertical-align: middle;
-            font-size: 24px;
+            font-size: clamp(1rem, 40cqw, 3.5rem);
         }
 
         .range-switch-div {
@@ -846,6 +846,7 @@
                 boardDiv.innerHTML = getCardHTML(boardCard1) + " " + getCardHTML(boardCard2) + " " + getCardHTML(boardCard3);
                 boardDiv.className = "board-cards";
                 hand_matrix_div.appendChild(boardDiv);
+
                 //Draw preflop total combos           
                 let preflopComboDiv = document.createElement("div");
                 preflopComboDiv.innerHTML = preflopCombos.toFixed(1) + "c";
