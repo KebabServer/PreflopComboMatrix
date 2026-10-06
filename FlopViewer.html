@@ -860,10 +860,6 @@
                 top = viewportHeight / 2 + offset;
             }
 
-            // 2. Clamp values so tooltip never exits the left/top viewport edges
-            left = Math.max(offset, Math.min(left, viewportWidth - tooltipWidth - offset));
-            top = Math.max(offset, Math.min(top, viewportHeight - tooltipHeight - offset));
-
             // 3. Apply scroll offset for absolute positioning
             tip.style.left = `${left + scrollX}px`;
             tip.style.top = `${top + scrollY}px`;
