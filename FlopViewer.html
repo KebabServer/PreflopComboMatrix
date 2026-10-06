@@ -775,9 +775,8 @@
                     if (collection.length > 0) {
                         tip.innerHTML = collection[0].getAttribute("tooltipText");
                     }
-
                     // Move the tooltip
-                    positionToolTip(event,tip);
+                    positionToolTip(event, tip);
                 });
                 hand_matrix_div.appendChild(tip);
 
@@ -849,16 +848,16 @@
 
             // 1. Calculate ideal viewport-relative coordinates
             let left = mouseX + offset;
-            let top = mouseY + offset;
+            let top = offset;
 
             // Flip to left if overflowing right edge
             if (left + tooltipWidth > viewportWidth) {
                 left = mouseX - tooltipWidth - offset;
             }
 
-            // Flip to top if overflowing bottom edge
-            if (top + tooltipHeight > viewportHeight) {
-                top = mouseY - tooltipHeight - offset;
+            // Flop to bottom if 
+            if (top < viewportHeight / 2) {
+                top = viewportHeight / 2 + offset;
             }
 
             // 2. Clamp values so tooltip never exits the left/top viewport edges
