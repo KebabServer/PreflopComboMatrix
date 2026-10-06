@@ -832,7 +832,6 @@
 
 
         function positionTooltip(event, tip, range_viewer) {
-            const offset = 15;
 
             const range_viewerTopX = range_viewer.getBoundingClientRect().left;
             const range_viewerTopY = range_viewer.getBoundingClientRect().top;
@@ -849,12 +848,12 @@
             const mouseY = event.clientY;
 
             // 1. Calculate ideal viewport-relative coordinates
-            let left = range_viewerTopX + offset;
-            let top = range_viewerTopY + offset;
+            let left = range_viewerTopX + 15;
+            let top = range_viewerTopY + 100;
 
             // Flop to bottom if 
             if (mouseY < (range_viewerTopY + range_viewerbottomY) / 2) {
-                top = (range_viewerTopY + range_viewerbottomY) / 2 + offset;
+                top = (range_viewerTopY + range_viewerbottomY) / 2 + 15;
             }
 
             // 3. Apply scroll offset for absolute positioning
