@@ -776,7 +776,7 @@
                         tip.innerHTML = collection[0].getAttribute("tooltipText");
                     }
                     // Move the tooltip
-                    positionTooltip(event, tip);
+                    positionTooltip(event, tip, range_viewer);
                 });
                 hand_matrix_div.appendChild(tip);
 
@@ -831,10 +831,14 @@
 
 
 
-        function positionTooltip(event, tip) {
+        function positionTooltip(event, tip, range_viewer) {
             const offset = 10;
             const tooltipWidth = tip.offsetWidth;
             const tooltipHeight = tip.offsetHeight;
+
+            const range_viewerTopX = range_viewer.getBoundingClientRect().left;
+            const range_viewerTopY = range_viewer.getBoundingClientRect().top;
+            const range_viewerbottomY = range_viewer.getBoundingClientRect().bottom;
 
             // Viewport dimensions and scroll offsets
             const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
@@ -847,12 +851,12 @@
             const mouseY = event.clientY;
 
             // 1. Calculate ideal viewport-relative coordinates
-            let left = offset;
-            let top = offset;
-            console.log(left + " " + top + " " + viewportHeight + " " +mouseY);
+            let left = range_viewerTopX + offset;
+            let top = range_viewerTopY + offset;
+
             // Flop to bottom if 
-            if (mouseY < viewportHeight / 2) {
-                top = viewportHeight / 2 + offset;
+            if (mouseY < (range_viewerTopY + range_viewerbottomY) / 2) {
+                top = (range_viewerTopY + range_viewerbottomY) / 2 + offset;
             }
 
             // 3. Apply scroll offset for absolute positioning
