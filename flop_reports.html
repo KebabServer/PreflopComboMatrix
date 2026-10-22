@@ -34,7 +34,7 @@
             z-index: 1000;
             color: black;
             border-radius: 4px;
-            box-shadow: 0px 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
         }
 
         #tooltip table tr td {
@@ -129,7 +129,7 @@
             border-color: #0056b3;
         }
 
-        #group5 {
+        #scenarioFiles {
             display: flex;
             flex-direction: column;
             gap: 4px;
@@ -137,12 +137,12 @@
         }
 
         @media (min-width: 900px) {
-            #group5 {
+            #scenarioFiles {
                 width: auto;
             }
         }
 
-        #group5 button {
+        #scenarioFiles button {
             display: block;
             padding: 6px 10px;
             width: 100%;
@@ -160,7 +160,7 @@
         }
 
         @media (min-width: 900px) {
-            #group5 button {
+            #scenarioFiles button {
                 width: 450px;
             }
         }
@@ -176,8 +176,19 @@
 <body>
     <div id="header-container"></div>
 
-    <div class="container">       
+    <div class="container">
         <div class="scenarios-wrapper">
+            <!-- SRP IP -->
+            <div class="scenario-category">
+                <h4>SRP IP</h4>
+                <div class="button-group-row">
+                    <button onclick="selectScenario('Simple_SRP_UTG_BB', this)">UTG vs BB</button>
+                    <button onclick="selectScenario('Simple_SRP_MP_BB', this)">MP vs BB</button>
+                    <button onclick="selectScenario('Simple_SRP_CO_BB', this)">CO vs BB</button>
+                    <button onclick="selectScenario('Simple_SRP_BU_BB', this)">BU vs BB</button>
+                    <button onclick="selectScenario('Simple_SRP_SB_BB', this)">SB vs BB (BvB OOP)</button>
+                </div>
+            </div>
             <!-- 3Bet IP -->
             <div class="scenario-category">
                 <h4>3Bet IP</h4>
@@ -188,7 +199,7 @@
                     <button onclick="selectScenario('Simple_3Bet_UTG_BU', this)">UTG vs BU</button>
                     <button onclick="selectScenario('Simple_3Bet_UTG_CO', this)">UTG vs CO</button>
                     <button onclick="selectScenario('Simple_3Bet_UTG_MP', this)">UTG vs MP</button>
-                    <button onclick="selectScenario('Simple_3Bet_SB_BB', this)">SB vs BB</button>
+                    <button onclick="selectScenario('Simple_3Bet_SB_BB', this)">SB vs BB (BvB)</button>
                 </div>
             </div>
 
@@ -207,20 +218,10 @@
                 </div>
             </div>
 
-            <!-- SRP IP -->
-            <div class="scenario-category">
-                <h4>SRP IP</h4>
-                <div class="button-group-row">
-                    <button onclick="selectScenario('Simple_SRP_UTG_BB', this)">UTG vs BB</button>
-                    <button onclick="selectScenario('Simple_SRP_MP_BB', this)">MP vs BB</button>
-                    <button onclick="selectScenario('Simple_SRP_CO_BB', this)">CO vs BB</button>
-                    <button onclick="selectScenario('Simple_SRP_BU_BB', this)">BU vs BB</button>
-                    <button onclick="selectScenario('Simple_SRP_SB_BB', this)">SB vs BB</button>
-                </div>
-            </div>
+
         </div>
 
-        <div id="group5">
+        <div id="scenarioFiles">
             <!-- Dynamically updated file buttons will appear here -->
         </div>
     </div>
@@ -456,7 +457,7 @@
 
                 if (index >= 0 && canvas.tooltipData[index]) {
                     tooltip.style.display = 'block';
-                    
+
                     const posX = Math.min(clientX + 10, window.innerWidth - 220);
                     const posY = clientY - 80 > 0 ? clientY - 80 : clientY + 15;
 
@@ -480,13 +481,13 @@
                 if (event.touches.length > 0) {
                     handlePointer(event.touches[0].clientX, event.touches[0].clientY);
                 }
-            }, { passive: true });
+            }, {passive: true});
 
             canvas.addEventListener('touchmove', function (event) {
                 if (event.touches.length > 0) {
                     handlePointer(event.touches[0].clientX, event.touches[0].clientY);
                 }
-            }, { passive: true });
+            }, {passive: true});
 
             canvas.addEventListener('touchend', function () {
                 tooltip.style.display = 'none';
@@ -548,24 +549,24 @@
                 btn.classList.remove('selected');
             });
             button.classList.add('selected');
-            updateGroup5(key);
+            updatescenarioFiles(key);
         }
 
-        function updateGroup5(selectedKey) {
-            const group5 = document.getElementById('group5');
-            group5.innerHTML = '';
+        function updatescenarioFiles(selectedKey) {
+            const scenarioFiles = document.getElementById('scenarioFiles');
+            scenarioFiles.innerHTML = '';
 
             if (fileMap[selectedKey]) {
                 fileMap[selectedKey].forEach(fileName => {
                     const newButton = document.createElement('button');
                     newButton.textContent = fileName;
-                    newButton.onclick = function () { fetchLocalCSVFile(fileName); };
-                    group5.appendChild(newButton);
+                    newButton.onclick = function () {fetchLocalCSVFile(fileName);};
+                    scenarioFiles.appendChild(newButton);
                 });
             } else {
                 const newButton = document.createElement('button');
                 newButton.textContent = 'No files';
-                group5.appendChild(newButton);
+                scenarioFiles.appendChild(newButton);
             }
         }
 
