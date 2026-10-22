@@ -85,8 +85,8 @@
 </head>
 
 <body>
-     <div id="header-container"></div>
-    
+    <div id="header-container"></div>
+
     <div class="container">
         <div><input type="file" id="fileInput" accept=".csv"></div>
         <div class="button-group" id="group1">
@@ -175,7 +175,7 @@
                 document.getElementById('header-container').innerHTML = data;
             })
     </script>
-    
+
     <script>
         document.getElementById('fileInput').addEventListener('change', handleFileSelect, false);
         const canvasHeight = 100;
@@ -184,7 +184,18 @@
         const order = 'AKQJT98765432';
         const setCards = ['A', 'K', 'Q', 'J', 'T', '9'];
 
-
+        const possibleStraights = [
+            [2, 3, 4, 5, 14],  // A2345
+            [2, 3, 4, 5, 6],
+            [3, 4, 5, 6, 7],
+            [4, 5, 6, 7, 8],
+            [5, 6, 7, 8, 9],
+            [6, 7, 8, 9, 10],
+            [7, 8, 9, 10, 11],  // 789TJ
+            [8, 9, 10, 11, 12], // 89TJQ
+            [9, 10, 11, 12, 13],// 9TJQK
+            [10, 11, 12, 13, 14]// TJQKA
+        ];
 
         function handleFileSelect(event) {
             const file = event.target.files[0];
@@ -215,17 +226,13 @@
         }
 
         function parseCSV(csv, sortByMiddleCard) {
-
-
             const rows = csv.split('\n').map(row => row.split(','));
-
             const headers = rows[0];
 
             // Get the indices for the columns you are interested in
             const flopIndex = Math.max(headers.indexOf('flop'), headers.indexOf('flop\r'));
             const ipEVIndex = Math.max(headers.indexOf('ip_ev'), headers.indexOf('ip_ev\r'));
             const oopEVIndex = Math.max(headers.indexOf('oop_ev'), headers.indexOf('oop_ev\r'));
-
 
             // Find indices dynamically
             const indices = {};
@@ -337,9 +344,6 @@
                     currentFirstLetter = firstLetter;
                     //Setup tooltip
 
-
-
-
                     let currentHeight = canvasHeight;
                     let toolTipTextTemp = "<tr><td>Flop:</td><td>" + row.flop + "</td></tr> <tr><td>IP EV:</td><td>" + parseFloat(row.ipEV).toFixed(2) + "</td></tr> <tr><td>OOP EV:</td><td>" + parseFloat(row.oopEV).toFixed(2) + "</td></tr>";
 
@@ -412,18 +416,7 @@
 
             // Check possible straights
             // A2345 or 23456 or 34567 etc. up to 9TJQK
-            const possibleStraights = [
-                [2, 3, 4, 5, 14],  // A2345
-                [2, 3, 4, 5, 6],
-                [3, 4, 5, 6, 7],
-                [4, 5, 6, 7, 8],
-                [5, 6, 7, 8, 9],
-                [6, 7, 8, 9, 10],
-                [7, 8, 9, 10, 11],  // 789TJ
-                [8, 9, 10, 11, 12], // 89TJQ
-                [9, 10, 11, 12, 13],// 9TJQK
-                [10, 11, 12, 13, 14]// TJQKA
-            ];
+
 
             for (const straight of possibleStraights) {
                 const match = straight.filter(value => rankValues.includes(value)).length >= 3;
@@ -483,7 +476,7 @@
                 fileMap[selectedKeys].forEach(fileName => {
                     const newButton = document.createElement('button');
                     newButton.textContent = fileName;
-                    newButton.onclick = function () { fetchLocalCSVFile(fileName); };
+                    newButton.onclick = function () {fetchLocalCSVFile(fileName);};
 
                     group5.appendChild(newButton);
                 });
@@ -518,8 +511,6 @@
         document.getElementById('group3').querySelector('button').click();
         document.getElementById('group4').querySelector('button').click();
         document.getElementById('group5').querySelector('button').click();
-
-
     </script>
 </body>
 
