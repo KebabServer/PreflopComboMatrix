@@ -25,6 +25,37 @@
             font-size: x-large;
         }
 
+        .inline-block h3 {
+            padding: 6px 12px;
+            border-radius: 4px;
+            color: #ffffff;
+            font-size: large;
+            margin-bottom: 6px;
+            display: inline-block;
+        }
+
+        /* Rainbow background for Rainbow texture headers */
+        .rainbow-header {
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.85), rgba(255, 165, 2, 0.85), rgba(46, 213, 115, 0.85), rgba(30, 144, 255, 0.85), rgba(155, 89, 182, 0.85));
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Dual-color background for Two-Tone texture headers */
+        .twotone-header {
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.9), rgba(47, 53, 66, 0.9));
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        }
+        /* Monotone background for Monotone texture headers */
+        .monotone-header {
+            background: linear-gradient(135deg, rgba(30, 144, 255, 0.9), rgba(41, 128, 185, 0.9));
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        }
+        /* Trips background for Trips texture headers */
+        .trips-header {
+            background: linear-gradient(135deg, rgba(241, 196, 15, 0.9), rgba(211, 84, 0, 0.9));
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
         #tooltip {
             position: absolute;
             background-color: white;
@@ -228,41 +259,41 @@
 
     <div class="rowDiv">
         <div class="inline-block">
-            <h3>Rainbow Disconnected</h3>
+            <h3 class="rainbow-header">Rainbow Disconnected</h3>
             <canvas id="csvCanvasRainbowDisconnected" width="1360" height="115"></canvas>
         </div>
         <div class="inline-block">
-            <h3>Rainbow Connected</h3>
+            <h3 class="rainbow-header">Rainbow Connected</h3>
             <canvas id="csvCanvasRainbowConnected" width="420" height="115"></canvas>
         </div>
     </div>
     <div class="rowDiv">
         <div class="inline-block">
-            <h3>Two-Tone Disconnected</h3>
+            <h3 class="twotone-header">Two-Tone Disconnected</h3>
             <canvas id="csvCanvasTwotoneDisconnected" width="1360" height="115"></canvas>
         </div>
         <div class="inline-block">
-            <h3>Two-Tone Connected</h3>
+            <h3 class="twotone-header">Two-Tone Connected</h3>
             <canvas id="csvCanvasTwotoneConnected" width="420" height="115"></canvas>
         </div>
     </div>
     <div class="rowDiv">
         <div class="inline-block">
-            <h3>Monotone</h3>
+            <h3 class="monotone-header">Monotone</h3>
             <canvas id="csvCanvasMonotone" width="1180" height="115"></canvas>
         </div>
         <div class="inline-block">
-            <h3>Trips</h3>
+            <h3 class="trips-header">Trips</h3>
             <canvas id="csvCanvasPairedTrips" width="150" height="115"></canvas>
         </div>
     </div>
     <div class="rowDiv">
         <div class="inline-block">
-            <h3>Paired Rainbow (Sorted by Middle Card)</h3>
+            <h3 class="rainbow-header">Paired Rainbow</h3>
             <canvas id="csvCanvasPairedRainbow" width="810" height="115"></canvas>
         </div>
         <div class="inline-block">
-            <h3>Paired Two-Tone (Sorted by Middle Card)</h3>
+            <h3 class="twotone-header">Paired Two-Tone</h3>
             <canvas id="csvCanvasPairedTwotone" width="810" height="115"></canvas>
         </div>
     </div>
