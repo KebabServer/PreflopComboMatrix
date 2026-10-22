@@ -14,7 +14,6 @@
 
         body {
             background-color: #141313;
-
         }
 
         h2,
@@ -30,7 +29,6 @@
             border: 1px solid black;
             padding: 5px;
             display: none;
-
         }
 
         #tooltip table tr td {
@@ -50,36 +48,64 @@
             display: flex;
             justify-content: flex-start;
             align-items: flex-start;
+            gap: 15px;
+            padding: 10px;
         }
 
-        .button-group {
+        .scenarios-wrapper {
             display: flex;
             flex-direction: column;
-            margin: 0px;
+            gap: 8px;
         }
 
-        .button-group button {
-            display: block;
-            margin: 0px;
-            padding: 5px;
-            width: 100px;
+        .scenario-category {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .scenario-category h4 {
+            color: coral;
+            width: 80px;
+            font-size: 14px;
+        }
+
+        .button-group-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .button-group-row button {
+            padding: 5px 8px;
             cursor: pointer;
             color: black;
+            border: 1px solid #ccc;
+            background-color: #f0f0f0;
+            border-radius: 3px;
+            font-size: 12px;
         }
 
-        .button-group button.selected {
+        .button-group-row button.selected {
             background-color: #007bff;
             color: white;
+            border-color: #0056b3;
+        }
+
+        #group5 {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         #group5 button {
-
             display: block;
-            margin: 0px;
-            padding: 5px;
-            width: 500px;
+            padding: 6px;
+            width: 450px;
             cursor: pointer;
             color: black;
+            text-align: left;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -89,33 +115,66 @@
 
     <div class="container">
         <div><input type="file" id="fileInput" accept=".csv"></div>
-        <div class="button-group" id="group1">
-            <button onclick="selectButton(this)">Simple</button>
-            <button onclick="selectButton(this)">General</button>
+        
+        <div class="scenarios-wrapper">
+            <!-- 3Bet IP -->
+            <div class="scenario-category">
+                <h4>3Bet IP</h4>
+                <div class="button-group-row">
+                    <button onclick="selectScenario('Simple_3Bet_CO_BU', this)">CO vs BU</button>
+                    <button onclick="selectScenario('Simple_3Bet_MP_BU', this)">MP vs BU</button>
+                    <button onclick="selectScenario('Simple_3Bet_MP_CO', this)">MP vs CO</button>
+                    <button onclick="selectScenario('Simple_3Bet_UTG_BU', this)">UTG vs BU</button>
+                    <button onclick="selectScenario('Simple_3Bet_UTG_CO', this)">UTG vs CO</button>
+                    <button onclick="selectScenario('Simple_3Bet_UTG_MP', this)">UTG vs MP</button>
+                </div>
+            </div>
+
+            <!-- 3Bet OOP -->
+            <div class="scenario-category">
+                <h4>3Bet OOP</h4>
+                <div class="button-group-row">
+                    <button onclick="selectScenario('Simple_3Bet_UTG_BB', this)">UTG vs BB</button>
+                    <button onclick="selectScenario('Simple_3Bet_MP_BB', this)">MP vs BB</button>
+                    <button onclick="selectScenario('Simple_3Bet_CO_BB', this)">CO vs BB</button>
+                    <button onclick="selectScenario('Simple_3Bet_BU_BB', this)">BU vs BB</button>
+                    <button onclick="selectScenario('Simple_3Bet_UTG_SB', this)">UTG vs SB</button>
+                    <button onclick="selectScenario('Simple_3Bet_MP_SB', this)">MP vs SB</button>
+                    <button onclick="selectScenario('Simple_3Bet_CO_SB', this)">CO vs SB</button>
+                    <button onclick="selectScenario('Simple_3Bet_BU_SB', this)">BU vs SB</button>
+                </div>
+            </div>
+
+            <!-- 3Bet BvB -->
+            <div class="scenario-category">
+                <h4>3Bet BvB</h4>
+                <div class="button-group-row">
+                    <button onclick="selectScenario('Simple_3Bet_SB_BB', this)">SB vs BB</button>
+                </div>
+            </div>
+
+            <!-- SRP IP -->
+            <div class="scenario-category">
+                <h4>SRP IP</h4>
+                <div class="button-group-row">
+                    <button onclick="selectScenario('Simple_SRP_UTG_BB', this)">UTG vs BB</button>
+                    <button onclick="selectScenario('Simple_SRP_MP_BB', this)">MP vs BB</button>
+                    <button onclick="selectScenario('Simple_SRP_CO_BB', this)">CO vs BB</button>
+                    <button onclick="selectScenario('Simple_SRP_BU_BB', this)">BU vs BB</button>
+                </div>
+            </div>
+
+            <!-- SRP BvB -->
+            <div class="scenario-category">
+                <h4>SRP BvB</h4>
+                <div class="button-group-row">
+                    <button onclick="selectScenario('Simple_SRP_SB_BB', this)">SB vs BB</button>
+                </div>
+            </div>
         </div>
-        <div class="button-group" id="group2">
-            <button onclick="selectButton(this)">SRP</button>
-            <button onclick="selectButton(this)">3Bet</button>
-            <button onclick="selectButton(this)">4Bet</button>
-        </div>
-        <div class="button-group" id="group3">
-            <button onclick="selectButton(this)">UTG</button>
-            <button onclick="selectButton(this)">MP</button>
-            <button onclick="selectButton(this)">CO</button>
-            <button onclick="selectButton(this)">BU</button>
-            <button onclick="selectButton(this)">SB</button>
-            <button onclick="selectButton(this)">BB</button>
-        </div>
-        <div class="button-group" id="group4">
-            <button onclick="selectButton(this)">UTG</button>
-            <button onclick="selectButton(this)">MP</button>
-            <button onclick="selectButton(this)">CO</button>
-            <button onclick="selectButton(this)">BU</button>
-            <button onclick="selectButton(this)">SB</button>
-            <button onclick="selectButton(this)">BB</button>
-        </div>
-        <div class="button-group" id="group5">
-            <!-- Dynamically updated buttons will appear here -->
+
+        <div id="group5">
+            <!-- Dynamically updated file buttons will appear here -->
         </div>
     </div>
 
@@ -164,8 +223,6 @@
         </div>
     </div>
 
-
-
     <div id="tooltip"></div>
 
     <script>
@@ -173,7 +230,7 @@
             .then(response => response.text())
             .then(data => {
                 document.getElementById('header-container').innerHTML = data;
-            })
+            });
     </script>
 
     <script>
@@ -209,7 +266,6 @@
             reader.readAsText(file);
         }
 
-
         function parseDataFromCSV(csvData, fileName) {
             const parsedData = parseCSV(csvData, false);
             const parsedDataMiddleCardSort = parseCSV(csvData, true);
@@ -222,19 +278,16 @@
             drawCanvas(document.getElementById('csvCanvasPairedRainbow'), parsedDataMiddleCardSort, ['paired', 'rainbow'], false, 5);
             drawCanvas(document.getElementById('csvCanvasPairedTwotone'), parsedDataMiddleCardSort, ['paired', 'twotone'], false, 5);
             drawCanvas(document.getElementById('csvCanvasPairedTrips'), parsedData, ['trips'], true, 10);
-
         }
 
         function parseCSV(csv, sortByMiddleCard) {
             const rows = csv.split('\n').map(row => row.split(','));
             const headers = rows[0];
 
-            // Get the indices for the columns you are interested in
             const flopIndex = Math.max(headers.indexOf('flop'), headers.indexOf('flop\r'));
             const ipEVIndex = Math.max(headers.indexOf('ip_ev'), headers.indexOf('ip_ev\r'));
             const oopEVIndex = Math.max(headers.indexOf('oop_ev'), headers.indexOf('oop_ev\r'));
 
-            // Find indices dynamically
             const indices = {};
             possibleHeaders.forEach(header => {
                 const index = headers.indexOf(header);
@@ -246,9 +299,7 @@
                 const theFlop = row[flopIndex].replace('\r', '');
                 const dataObj = {};
                 Object.keys(indices).forEach(header => {
-                    // dataObj[header] = parseFloat(row[indices[header]].replace('%', ''));
                     dataObj[header] = row[indices[header]].includes('%') ? parseFloat(row[indices[header]].replace('%', '')) : parseFloat(row[indices[header]] * 100);
-
                 });
                 dataObj.flop = theFlop;
                 dataObj.ipEV = row[ipEVIndex].replace('\r', '');
@@ -263,7 +314,6 @@
                 dataObj.disconnected = !hasStraightPossibility(theFlop);
                 return dataObj;
             });
-            // Sorting based on custom order for the first, third, and fourth letters of the "flop" column
 
             const orderMap = {};
             for (let i = 0; i < order.length; i++) {
@@ -275,9 +325,8 @@
             }
 
             function padIndex(index) {
-                return index.toString().padStart(2, '0');  // Adjusted padding for 2 digits
+                return index.toString().padStart(2, '0');
             }
-
 
             if (sortByMiddleCard) {
                 data.sort((a, b) => {
@@ -296,7 +345,6 @@
             return data;
         }
 
-        // Color configuration
         const colorConfig = {
             Check: 'green',
             Fold: 'dodgerblue',
@@ -328,21 +376,18 @@
                     }
                 });
                 if (drawRow) {
-                    // Draw the first letter of the "flop" column under the canvas
                     const firstLetter = drawHighCard ? row.flop[0] : row.flop[2];
                     if (firstLetter !== currentFirstLetter && currentFirstLetter != '') {
                         ctx.fillStyle = 'white';
                         ctx.font = '14px Arial';
                         ctx.fillText(firstLetter, x, canvasHeight + 14);
 
-                        // // Draw a black pixel line
                         ctx.fillRect(x, 0, 1, canvasHeight);
                         ctx.fillStyle = 'white';
                         canvas.tooltipData[x] = firstLetter + "-high boards";
                         x++;
                     }
                     currentFirstLetter = firstLetter;
-                    //Setup tooltip
 
                     let currentHeight = canvasHeight;
                     let toolTipTextTemp = "<tr><td>Flop:</td><td>" + row.flop + "</td></tr> <tr><td>IP EV:</td><td>" + parseFloat(row.ipEV).toFixed(2) + "</td></tr> <tr><td>OOP EV:</td><td>" + parseFloat(row.oopEV).toFixed(2) + "</td></tr>";
@@ -355,7 +400,6 @@
                             currentHeight -= headerHeight;
                             ctx.fillRect(x, currentHeight, colWidth, headerHeight);
                             toolTipTextTemp += "<tr><td>" + header + "</td><td>" + row[header].toFixed(1) + "%</td></tr>";
-
                         }
                     }
                     let nextX = x;
@@ -366,12 +410,10 @@
 
                     x += colWidth;
                 }
-
             });
             ctx.fillStyle = 'black';
             ctx.font = '18px Arial';
             addHoverEffect(data, canvas);
-            // ctx.fillText(x, 50, 60);
         }
 
         function addHoverEffect(data, canvas) {
@@ -400,7 +442,7 @@
         }
 
         function hasStraightPossibility(flop) {
-            const ranks = flop.split('').filter((_, index) => index % 2 === 0); // Extract ranks (1st, 3rd, 5th characters)
+            const ranks = flop.split('').filter((_, index) => index % 2 === 0);
             const rankValues = ranks.map(rank => {
                 switch (rank) {
                     case 'A': return 14;
@@ -421,9 +463,7 @@
             return false;
         }
 
-        //File selector
         const fileMap = {
-            //Simple
             //3Bet IP
             'Simple_3Bet_CO_BU': ['NL500 Simple 2.5x 3b_GTO 3Bet IP - 3Bet CO vs BU.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet IP vs Cbet - 3Bet CO vs BU vs B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet IP vs Cbet - 3Bet CO vs BU vs B66.csv'],
             'Simple_3Bet_MP_BU': ['NL500 Simple 2.5x 3b_GTO 3Bet IP - 3Bet MP vs BU.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet IP vs Cbet - 3Bet MP vs BU vs B33.csv', 'NL500 Simple 2.5x 3b_GTO 3Bet IP vs Cbet - 3Bet CO vs BU vs B66.csv'],
@@ -451,27 +491,23 @@
             'Simple_SRP_SB_BB': ['NL500 Simple 2.5x 3b_GTO BvB SRP - SRP BvB CBet.csv', 'NL500 Simple 2.5x 3b_GTO BvB SRP - SRP BvB vs X.csv', 'NL500 Simple 2.5x 3b_GTO BvB SRP - SRP BvB vs B33.csv', 'NL500 Simple 2.5x 3b_GTO BvB SRP - SRP BvB vs B66.csv', 'NL500 Simple 2.5x 3b_GTO BvB SRP - SRP BvB vs B130.csv'],
         };
 
-        function selectButton(button) {
-            const group = button.parentElement;
-            const buttons = group.querySelectorAll('button');
-            buttons.forEach(btn => btn.classList.remove('selected'));
+        function selectScenario(key, button) {
+            document.querySelectorAll('.button-group-row button').forEach(btn => {
+                btn.classList.remove('selected');
+            });
             button.classList.add('selected');
-            updateGroup5();
+            updateGroup5(key);
         }
 
-        function updateGroup5() {
+        function updateGroup5(selectedKey) {
             const group5 = document.getElementById('group5');
             group5.innerHTML = '';
 
-            const selectedButtons = document.querySelectorAll('.button-group button.selected');
-            const selectedKeys = Array.from(selectedButtons).map(button => button.textContent).join('_');
-
-            if (fileMap[selectedKeys]) {
-                fileMap[selectedKeys].forEach(fileName => {
+            if (fileMap[selectedKey]) {
+                fileMap[selectedKey].forEach(fileName => {
                     const newButton = document.createElement('button');
                     newButton.textContent = fileName;
-                    newButton.onclick = function () {fetchLocalCSVFile(fileName);};
-
+                    newButton.onclick = function () { fetchLocalCSVFile(fileName); };
                     group5.appendChild(newButton);
                 });
             } else {
@@ -490,21 +526,20 @@
                     return response.text();
                 })
                 .then(data => {
-                    // Process the CSV data (e.g., parse into an array)
                     parseDataFromCSV(data, fileName);
-                    // Add your custom functionality here
                 })
                 .catch(error => {
                     console.error('Error fetching CSV file:', error);
                 });
         }
 
-        // Initial selection
-        document.getElementById('group1').querySelector('button').click();
-        document.getElementById('group2').querySelector('button').click();
-        document.getElementById('group3').querySelector('button').click();
-        document.getElementById('group4').querySelector('button').click();
-        document.getElementById('group5').querySelector('button').click();
+        // Initial selection on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const firstButton = document.querySelector('.button-group-row button');
+            if (firstButton) {
+                firstButton.click();
+            }
+        });
     </script>
 </body>
 
