@@ -495,7 +495,7 @@
         }
 
         function fetchLocalCSVFile(fileName) {
-            fetch('./CSVs/' + fileName)
+            fetch('./flop_reports/' + fileName)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
