@@ -414,15 +414,10 @@
 
             rankValues.sort((a, b) => a - b);
 
-            // Check possible straights
-            // A2345 or 23456 or 34567 etc. up to 9TJQK
-
-
             for (const straight of possibleStraights) {
                 const match = straight.filter(value => rankValues.includes(value)).length >= 3;
                 if (match) return true;
             }
-
             return false;
         }
 
