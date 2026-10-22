@@ -176,9 +176,7 @@
 <body>
     <div id="header-container"></div>
 
-    <div class="container">
-        <div><input type="file" id="fileInput" accept=".csv"></div>
-        
+    <div class="container">       
         <div class="scenarios-wrapper">
             <!-- 3Bet IP -->
             <div class="scenario-category">
@@ -279,7 +277,6 @@
     </script>
 
     <script>
-        document.getElementById('fileInput').addEventListener('change', handleFileSelect, false);
         const canvasHeight = 100;
 
         const possibleHeaders = ['Fold', 'Call', 'Check', 'B33', 'B66', 'B130', 'R35', 'R55', 'R83', 'R120', 'R50', 'R100', 'R150', 'AI'];
@@ -298,18 +295,6 @@
             [9, 10, 11, 12, 13],// 9TJQK
             [10, 11, 12, 13, 14]// TJQKA
         ];
-
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            const reader = new FileReader();
-
-            reader.onload = function (event) {
-                const csvData = event.target.result;
-                parseDataFromCSV(csvData, file.name);
-            };
-
-            reader.readAsText(file);
-        }
 
         function parseDataFromCSV(csvData, fileName) {
             const parsedData = parseCSV(csvData, false);
