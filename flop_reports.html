@@ -590,14 +590,24 @@
         function updatescenarioFiles(selectedKey) {
             const scenarioFiles = document.getElementById('scenarioFiles');
             scenarioFiles.innerHTML = '';
-
-            if (fileMap[selectedKey]) {
+            let firstButton = null;
+            
+            if (fileMap[selectedKey] && fileMap[selectedKey].length > 0) {
+                let firstButton = null;
                 fileMap[selectedKey].forEach(fileName => {
                     const newButton = document.createElement('button');
                     newButton.textContent = fileName;
                     newButton.onclick = function () {fetchLocalCSVFile(fileName);};
                     scenarioFiles.appendChild(newButton);
+                    // Store reference to the first button
+                    if (!firstButton) {
+                        firstButton = newButton;
+                    }
                 });
+                // Automatically click the first button
+                if (firstButton) {
+                    firstButton.click();
+                }
             } else {
                 const newButton = document.createElement('button');
                 newButton.textContent = 'No files';
