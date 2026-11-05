@@ -620,7 +620,7 @@
       setTimeout(() => {
         viewCategoryEl.textContent = concept.category;
         viewTitleEl.textContent = concept.title;
-        viewDescriptionEl.textContent = concept.description;
+        viewDescriptionEl.innerHTML = concept.description;
         viewerContentEl.classList.remove('fading');
       }, 150);
     }
