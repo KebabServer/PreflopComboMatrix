@@ -3,7 +3,7 @@
 "id": "Value_Betting",
 "title": "Value Betting",
 "category": "Poker Basics",
-"description": "There are three different situations with respect to value betting:\n\n1. You Cannot Value Bet\n2. It's Optional to Value Bet\n3. You Must Value Bet\n\nThese situations are determined by two key factors: Urgency and Landing Equity.\n\n Urgency refers to how important it is to build pot now. \n\nLanding Equity is your equity of your hand before your opponent has reacted to your bet.\n\nMinimum Landing Equity requirements for value betting based on bet sizing and board texture:\n\n• B33 (33% Pot Bet):\n  - Wet Turn: 55%\n  - Dry Turn or River: 65-70%\n\n• B75 (75% Pot Bet):\n  - Wet Turn: 65%\n  - Dry Turn or River: 75-80%\n\n• B150 (150% Pot Bet):\n  - Wet Turn: 75%\n  - Dry Turn or River: 85-90%"
+"description": "There are three different situations with respect to value betting:\n\n1. You Cannot Value Bet\n2. It's Optional to Value Bet\n3. You Must Value Bet\n\nThese situations are determined by two key factors: <b>Urgency</b> and <b>Landing Equity</b>.\n\n <b>Urgency</b> refers to how important it is to build pot now. \n\n<b>Landing Equity</b> is your equity of your hand before your opponent has reacted to your bet.\n\nMinimum Landing Equity requirements for value betting based on bet sizing and board texture:\n\n• B33 (33% Pot Bet):\n  - Wet Turn: 55%\n  - Dry Turn or River: 65-70%\n\n• B75 (75% Pot Bet):\n  - Wet Turn: 65%\n  - Dry Turn or River: 75-80%\n\n• B150 (150% Pot Bet):\n  - Wet Turn: 75%\n  - Dry Turn or River: 85-90%"
 },
 {
 "id": "mental-models",
