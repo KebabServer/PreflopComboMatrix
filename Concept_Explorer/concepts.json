@@ -7,9 +7,9 @@
 },
 {
 "id": "Value_Betting",
-"title": "Value Betting",
+"title": "Value Betting and Denial",
 "category": "Poker Basics",
-"description": "There are three different situations with respect to value betting. <b>Equity</b> and <b>Urgency</b> determine in which situation we are in.<h3>Must Value Bet</h3>When your hand is strong enough to pick a certain bet size.<h6><b>AND</b></h6>Urgency is high.<h3>Optional Value Bet</h3>When your hand is strong enough to pick a certain bet size.<h6><b>AND</b></h6>Urgency is NOT high.<h3>You Cannot Value Bet</h3>When your hand is not strong enough to pick any bet size.<h6><b>OR</b></h6>You are not building a betting range using a sizing small enough to value bet your hand."
+"description": "There are three different situations with respect to value betting. <b>Equity</b> and <b>Urgency</b> determine in which situation we are in.<h3>Must Value Bet</h3>When your hand is strong enough to pick a certain bet size.<h6><b>AND</b></h6>Urgency is high.<h3>Optional Value Bet</h3>When your hand is strong enough to pick a certain bet size.<h6><b>AND</b></h6>Urgency is NOT high.<h3>You Cannot Value Bet</h3>When your hand is not strong enough to pick any bet size.<h6><b>OR</b></h6>You are not building a betting range using a sizing small enough to value bet your hand. <h1>Denial</h1>Denyinh equity to livew hands your opponent has to fold is a useful bonus but not a sufficient reason for betting by itself.\n\nDenial comes in handy when the fold equity is largely useful to you.(Flop and turn)\n\n Lower pairs require more protection than the higher pairs."
 },
 {
 "id": "mental-models",
