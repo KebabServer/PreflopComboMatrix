@@ -9,7 +9,7 @@
 "id": "Value_Betting",
 "title": "Value Betting",
 "category": "Poker Basics",
-"description": "Urgency and Landing Equity determine if we can and should value bet.<h2>Urgency</h2>Urgency is <h2>Landing Equity</h2><h1>Value Betting</h1>There are three different situations with respect to value betting:<h3>Must Value Bet</h3>When your hand is strong enough to pick a certain bet size.<h4><b>AND</b></h4>Urgency is high.<h3>Optional Value Bet</h3>When your hand is strong enough to pick a certain bet size.<h4><b>AND</b></h4>Urgency is NOT high.<h3>You Cannot Value Bet</h3>When your hand is not strong enough to pick any bet size.<h4><b>OR</b></h4>You are not building a betting range using a sizing small enough to value bet your hand."
+"description": "Urgency and Landing Equity determine if we can and should value bet.<h2>Urgency</h2>Urgency is <h2>Landing Equity</h2><h1>Value Betting</h1>There are three different situations with respect to value betting:<h3>Must Value Bet</h3>When your hand is strong enough to pick a certain bet size.<h6><b>AND</b></h6>Urgency is high.<h3>Optional Value Bet</h3>When your hand is strong enough to pick a certain bet size.<h6><b>AND</b></h6>Urgency is NOT high.<h3>You Cannot Value Bet</h3>When your hand is not strong enough to pick any bet size.<h6><b>OR</b></h6>You are not building a betting range using a sizing small enough to value bet your hand."
 },
 {
 "id": "mental-models",
