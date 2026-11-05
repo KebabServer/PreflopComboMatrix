@@ -1,0 +1,14 @@
+[
+{
+"id": "entropy",
+"title": "Entropy",
+"category": "Physics & CS",
+"description": "In thermodynamics, entropy measures the degree of randomness or disorder within a closed system. The Second Law of Thermodynamics dictates that total entropy always increases over time.\n\nIn Information Theory (Shannon Entropy), it quantifies the average amount of information, surprise, or uncertainty inherent in a variable's possible outcomes."
+},
+{
+"id": "mental-models",
+"title": "Mental Models",
+"category": "Cognitive Science",
+"description": "A mental model is an internal explanation of how something works in the real world. It shapes our perceptions, reasoning, and decision-making mechanisms.\n\nBy building a 'latticework' of mental models across discipline boundaries—such as inversion, opportunity cost, and first principles—individuals can make clearer, objective assessments of complex problems."
+}
+]
