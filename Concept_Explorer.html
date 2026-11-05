@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Concept Explorer</title>
+  <style>
+    /* CSS Variables & Theme Setup */
+    :root[data-theme="dark"] {
+      --bg-main: #0f172a;
+      --bg-card: #1e293b;
+      --bg-card-hover: #334155;
+      --bg-card-active: #1e293b;
+      --border-color: #334155;
+      --border-active: #38bdf8;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.15);
+      --badge-bg: rgba(56, 189, 248, 0.1);
+      --badge-text: #38bdf8;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+      --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.3);
+      --scrollbar-thumb: #334155;
+      --toast-bg: #451a03;
+      --toast-border: #b45309;
+      --toast-text: #fef3c7;
+    }
+
+    :root[data-theme="light"] {
+      --bg-main: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f1f5f9;
+      --bg-card-active: #ffffff;
+      --border-color: #e2e8f0;
+      --border-active: #0284c7;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent: #0284c7;
+      --accent-glow: rgba(2, 132, 199, 0.12);
+      --badge-bg: rgba(2, 132, 199, 0.08);
+      --badge-text: #0284c7;
+      --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 16px -4px rgba(0, 0, 0, 0.08);
+      --scrollbar-thumb: #cbd5e1;
+      --toast-bg: #fffbebfb;
+      --toast-border: #fcd34d;
+      --toast-text: #92400e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      overflow: hidden;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      background-color: var(--bg-card);
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 0.5rem;
+      background: linear-gradient(135deg, var(--accent), #818cf8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    .brand h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .theme-toggle {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .theme-toggle:hover {
+      background-color: var(--bg-card-hover);
+      border-color: var(--text-muted);
+    }
+
+    /* Status Toast / Banner */
+    .status-toast {
+      display: none;
+      background-color: var(--toast-bg);
+      border-bottom: 1px solid var(--toast-border);
+      color: var(--toast-text);
+      padding: 0.4rem 1.5rem;
+      font-size: 0.8rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .status-toast.visible {
+      display: flex;
+    }
+
+    /* App Layout */
+    .app-container {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      flex: 1;
+      height: calc(100vh - 65px);
+      overflow: hidden;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      background-color: var(--bg-main);
+      overflow: hidden;
+    }
+
+    .search-box {
+      padding: 0.65rem 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.45rem 0.75rem;
+      padding-left: 2rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.375rem;
+      background-color: var(--bg-card);
+      color: var(--text-main);
+      font-size: 0.85rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+      font-size: 0.8rem;
+    }
+
+    .concept-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    /* Concept Card Item - Compact Single Line */
+    .concept-card {
+      padding: 0.45rem 0.65rem;
+      border-radius: 0.375rem;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      outline: none;
+      position: relative;
+    }
+
+    .concept-card:hover {
+      background-color: var(--bg-card-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .concept-card.active {
+      border-color: var(--border-active);
+      box-shadow: 0 0 0 1px var(--border-active), var(--shadow-sm);
+      background-color: var(--bg-card-active);
+    }
+
+    .concept-card.active::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background-color: var(--accent);
+      border-top-left-radius: 0.375rem;
+      border-bottom-left-radius: 0.375rem;
+    }
+
+    .concept-card:focus-visible {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      gap: 0.5rem;
+    }
+
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-category {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.1rem 0.35rem;
+      border-radius: 0.2rem;
+      background-color: var(--badge-bg);
+      color: var(--badge-text);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Main Viewer Panel */
+    .viewer {
+      flex: 1;
+      padding: 3rem 4rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      background-color: var(--bg-card);
+    }
+
+    .viewer-content {
+      max-width: 720px;
+      margin: 0 auto;
+      width: 100%;
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .viewer-content.fading {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+
+    .viewer-category {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.25rem 0.6rem;
+      border-radius: 0.35rem;
+      background-color: var(--badge-bg);
+      color: var(--badge-text);
+      margin-bottom: 1rem;
+    }
+
+    .viewer-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+      color: var(--text-main);
+    }
+
+    .viewer-body {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: var(--text-muted);
+      white-space: pre-line;
+    }
+
+    .empty-state {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      text-align: center;
+      gap: 0.5rem;
+    }
+
+    /* Keyboard Instructions Footer */
+    .keyboard-hint {
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      background-color: var(--bg-card);
+    }
+
+    kbd {
+      background-color: var(--bg-main);
+      border: 1px solid var(--border-color);
+      border-radius: 0.2rem;
+      padding: 0.1rem 0.35rem;
+      font-family: inherit;
+      font-size: 0.7rem;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+    }
+
+    /* Scrollbar Aesthetics */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-thumb);
+      border-radius: 3px;
+    }
+
+    /* Responsive Mobile Layout */
+    @media (max-width: 768px) {
+      body {
+        overflow: auto;
+      }
+      .app-container {
+        grid-template-columns: 1fr;
+        height: auto;
+        overflow: visible;
+      }
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        max-height: 40vh;
+      }
+      .viewer {
+        padding: 1.5rem 1.25rem;
+      }
+      .viewer-title {
+        font-size: 1.75rem;
+      }
+      .keyboard-hint {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">C</div>
+      <h1>Concept Explorer</h1>
+    </div>
+    <div class="header-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <span id="themeIcon">☀️</span>
+        <span id="themeText">Light</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Status Notification Banner -->
+  <div class="status-toast" id="statusToast">
+    <span>⚠️ Loaded embedded fallback dataset (could not fetch <code>concepts.json</code> over local protocol/CORS).</span>
+    <button onclick="document.getElementById('statusToast').classList.remove('visible')" style="background:none; border:none; color:inherit; cursor:pointer; font-weight:bold;">✕</button>
+  </div>
+
+  <!-- App Main Content -->
+  <div class="app-container">
+    
+    <!-- Sidebar: Search & List -->
+    <aside class="sidebar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          id="searchInput" 
+          class="search-input" 
+          placeholder="Filter concepts... (Press '/' to focus)" 
+          autocomplete="off"
+        />
+      </div>
+      <div class="concept-list" id="conceptList" role="listbox" tabIndex="0"></div>
+      <div class="keyboard-hint">
+        <span><kbd>↑</kbd> <kbd>↓</kbd> Navigate</span>
+        <span><kbd>Enter</kbd> Select</span>
+        <span><kbd>/</kbd> Search</span>
+      </div>
+    </aside>
+
+    <!-- Main Detail Viewer -->
+    <main class="viewer" id="viewerContainer">
+      <div class="viewer-content" id="viewerContent">
+        <span class="viewer-category" id="viewCategory">Category</span>
+        <h2 class="viewer-title" id="viewTitle">Select a Concept</h2>
+        <div class="viewer-body" id="viewDescription">Choose a concept from the list on the left to view its complete detailed definition.</div>
+      </div>
+    </main>
+
+  </div>
+
+  <script>
+    // Embedded Fallback Data in case concepts.json fails to load (e.g. file:// protocol CORS restriction)
+    const fallbackConcepts = [
+      {
+        "id": "entropy",
+        "title": "Entropy",
+        "category": "Physics & CS",
+        "description": "In thermodynamics, entropy measures the degree of randomness or disorder within a closed system. The Second Law of Thermodynamics dictates that total entropy always increases over time.\n\nIn Information Theory (Shannon Entropy), it quantifies the average amount of information, surprise, or uncertainty inherent in a variable's possible outcomes."
+      },
+      {
+        "id": "mental-models",
+        "title": "Mental Models",
+        "category": "Cognitive Science",
+        "description": "A mental model is an internal explanation of how something works in the real world. It shapes our perceptions, reasoning, and decision-making mechanisms.\n\nBy building a 'latticework' of mental models across discipline boundaries—such as inversion, opportunity cost, and first principles—individuals can make clearer, objective assessments of complex problems."
+      },
+      {
+        "id": "first-principles",
+        "title": "First Principles Thinking",
+        "category": "Philosophy",
+        "description": "First-principles thinking is the practice of actively questioning every assumption you think you know about a given problem or scenario, then creating new knowledge and solutions from fundamental truths.\n\nInstead of reasoning by analogy (doing what others do), you break down a situation into its most basic building blocks and re-evaluate logic from the ground up."
+      },
+      {
+        "id": "affordance",
+        "title": "Affordance",
+        "category": "UI/UX Design",
+        "description": "An affordance is a perceived signal or visual cue that communicates how an object or interface component should be interacted with.\n\nFor example, a raised, 3D button visually 'affords' pushing, while a simple door handle affords pulling. Great design leverages natural affordances to make interfaces intuitively usable without instructions."
+      },
+      {
+        "id": "closure",
+        "title": "Closure & Currying",
+        "category": "Computer Science",
+        "description": "A Closure in JavaScript is the combination of a function bundled together with references to its surrounding state (lexical environment).\n\nClosure allows an inner function access to an outer function's scope even after the outer function has executed, laying the mathematical foundation for currying and private data encapsulation."
+      }
+    ];
+
+    // State Variables
+    let allConcepts = [];
+    let filteredConcepts = [];
+    let selectedId = null;
+    let focusedIndex = 0;
+
+    // DOM References
+    const conceptListEl = document.getElementById('conceptList');
+    const searchInputEl = document.getElementById('searchInput');
+    const viewerContentEl = document.getElementById('viewerContent');
+    const viewCategoryEl = document.getElementById('viewCategory');
+    const viewTitleEl = document.getElementById('viewTitle');
+    const viewDescriptionEl = document.getElementById('viewDescription');
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const themeIconEl = document.getElementById('themeIcon');
+    const themeTextEl = document.getElementById('themeText');
+    const statusToastEl = document.getElementById('statusToast');
+
+    // Theme Management
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      updateThemeUI(savedTheme);
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      updateThemeUI(next);
+    }
+
+    function updateThemeUI(theme) {
+      if (theme === 'dark') {
+        themeIconEl.textContent = '☀️';
+        themeTextEl.textContent = 'Light';
+      } else {
+        themeIconEl.textContent = '🌙';
+        themeTextEl.textContent = 'Dark';
+      }
+    }
+
+    // Fetch JSON Data with Fallback
+    async function loadConceptsData() {
+      try {
+        const response = await fetch('concepts.json');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        allConcepts = await response.json();
+      } catch (err) {
+        console.warn('Could not fetch concepts.json, using fallback data:', err);
+        allConcepts = fallbackConcepts;
+        statusToastEl.classList.add('visible');
+      }
+
+      filteredConcepts = [...allConcepts];
+      if (allConcepts.length > 0) {
+        selectedId = allConcepts[0].id;
+      }
+      
+      renderList();
+      if (selectedId) {
+        selectConcept(selectedId);
+      }
+    }
+
+    // Render Compact List Items
+    function renderList() {
+      conceptListEl.innerHTML = '';
+
+      if (filteredConcepts.length === 0) {
+        conceptListEl.innerHTML = `
+          <div class="empty-state" style="padding: 2rem 1rem;">
+            <p>No matching concepts found.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filteredConcepts.forEach((item, idx) => {
+        const cardNode = document.createElement('div');
+        cardNode.className = `concept-card ${item.id === selectedId ? 'active' : ''}`;
+        cardNode.setAttribute('tabindex', '0');
+        cardNode.setAttribute('role', 'option');
+        cardNode.setAttribute('aria-selected', item.id === selectedId ? 'true' : 'false');
+        cardNode.dataset.id = item.id;
+        cardNode.dataset.index = idx;
+
+        cardNode.innerHTML = `
+          <div class="card-header">
+            <span class="card-title" title="${escapeHTML(item.title)}">${escapeHTML(item.title)}</span>
+            <span class="card-category">${escapeHTML(item.category)}</span>
+          </div>
+        `;
+
+        cardNode.addEventListener('click', () => {
+          selectConcept(item.id);
+          focusedIndex = idx;
+        });
+
+        conceptListEl.appendChild(cardNode);
+      });
+    }
+
+    // Update Viewer Panel
+    function selectConcept(id) {
+      const concept = allConcepts.find(c => c.id === id);
+      if (!concept) return;
+
+      selectedId = id;
+
+      const cards = conceptListEl.querySelectorAll('.concept-card');
+      cards.forEach(card => {
+        const isSelected = card.dataset.id === id;
+        card.classList.toggle('active', isSelected);
+        card.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+      });
+
+      viewerContentEl.classList.add('fading');
+      setTimeout(() => {
+        viewCategoryEl.textContent = concept.category;
+        viewTitleEl.textContent = concept.title;
+        viewDescriptionEl.textContent = concept.description;
+        viewerContentEl.classList.remove('fading');
+      }, 150);
+    }
+
+    // Filter strictly by concept title
+    function handleSearch(query) {
+      const cleanQuery = query.toLowerCase().trim();
+      
+      filteredConcepts = allConcepts.filter(c => 
+        c.title.toLowerCase().includes(cleanQuery)
+      );
+
+      focusedIndex = 0;
+      renderList();
+
+      if (filteredConcepts.length > 0) {
+        const currentStillVisible = filteredConcepts.some(c => c.id === selectedId);
+        if (!currentStillVisible) {
+          selectConcept(filteredConcepts[0].id);
+        }
+      } else {
+        viewCategoryEl.textContent = "N/A";
+        viewTitleEl.textContent = "No match";
+        viewDescriptionEl.textContent = "Try searching for another keyword or clearing your filter.";
+      }
+    }
+
+    // Keyboard Shortcuts Logic
+    function setupKeyboardNav() {
+      document.addEventListener('keydown', (e) => {
+        if (e.key === '/' && document.activeElement !== searchInputEl) {
+          e.preventDefault();
+          searchInputEl.focus();
+          searchInputEl.select();
+          return;
+        }
+
+        if (['ArrowDown', 'ArrowUp', 'Enter'].includes(e.key)) {
+          if (filteredConcepts.length === 0) return;
+
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            focusedIndex = (focusedIndex + 1) % filteredConcepts.length;
+            highlightFocusedItem();
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            focusedIndex = (focusedIndex - 1 + filteredConcepts.length) % filteredConcepts.length;
+            highlightFocusedItem();
+          } else if (e.key === 'Enter') {
+            if (filteredConcepts[focusedIndex]) {
+              selectConcept(filteredConcepts[focusedIndex].id);
+            }
+          }
+        }
+      });
+    }
+
+    function highlightFocusedItem() {
+      const cards = conceptListEl.querySelectorAll('.concept-card');
+      if (cards[focusedIndex]) {
+        cards[focusedIndex].focus();
+        selectConcept(filteredConcepts[focusedIndex].id);
+        cards[focusedIndex].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+      );
+    }
+
+    // Initialize Application
+    window.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      loadConceptsData();
+      setupKeyboardNav();
+
+      themeToggleBtn.addEventListener('click', toggleTheme);
+      searchInputEl.addEventListener('input', (e) => {
+        handleSearch(e.target.value);
+      });
+    });
+  </script>
+</body>
+</html>
