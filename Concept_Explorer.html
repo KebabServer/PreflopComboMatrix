@@ -544,7 +544,7 @@
     // Fetch JSON Data with Fallback
     async function loadConceptsData() {
       try {
-        const response = await fetch('concepts.json');
+        const response = await fetch('Concept_Explorer/concepts.json');
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         allConcepts = await response.json();
       } catch (err) {
