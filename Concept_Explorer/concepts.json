@@ -9,7 +9,29 @@
 "id": "Value_Betting",
 "title": "Value Betting",
 "category": "Poker Basics",
-"description": "There are three different situations with respect to value betting:\n\n1. You Cannot Value Bet\n2. It's Optional to Value Bet\n3. You Must Value Bet\n\nThese situations are determined by two key factors: <b>Urgency</b> and <b>Landing Equity</b>.\n\n <b>Urgency</b> refers to how important it is to build pot now. \n\n<b>Landing Equity</b> is your equity of your hand before your opponent has reacted to your bet.\n\n"
+"description": "Urgency and Landing Equity determine if we can and should value bet.
+
+<h2>Urgency</h2>
+Urgency is 
+
+<h2>Landing Equity</h2>
+
+<h1>Value Betting>
+\n\n
+There are three different situations with respect to value betting:\n\n
+
+<h3>Must Value Bet</h3>
+When your hand is strong enough to pick a certain bet size.
+<h4><b>AND</b></h4>
+Urgency is high.
+<h3>Optional Value Bet</h3>
+When your hand is strong enough to pick a certain bet size.
+<h4><b>AND</b></h4>
+Urgency is NOT high.
+<h3>You Cannot Value Bet</h3>
+When your hand is not strong enough to pick any bet size.
+<h4><b>OR</b></h4>
+You are not building a betting range using a sizing small enough to value bet your hand."
 },
 {
 "id": "mental-models",
