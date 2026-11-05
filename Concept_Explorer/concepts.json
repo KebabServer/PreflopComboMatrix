@@ -1,9 +1,9 @@
 [
 {
-"id": "entropy",
-"title": "Entropy",
-"category": "Physics & CS",
-"description": "In thermodynamics, entropy measures the degree of randomness or disorder within a closed system. The Second Law of Thermodynamics dictates that total entropy always increases over time.\n\nIn Information Theory (Shannon Entropy), it quantifies the average amount of information, surprise, or uncertainty inherent in a variable's possible outcomes."
+"id": "Value_Betting",
+"title": "Value Betting",
+"category": "Poker Basics",
+"description": "There are three different situations with respect to value betting:\n\n1. You Cannot Value Bet\n2. It's Optional to Value Bet\n3. You Must Value Bet\n\nThese situations are determined by two key factors: Urgency and Landing Equity.\n\n Urgency refers to how important it is to build pot now. \n\nLanding Equity is your equity of your hand before your opponent has reacted to your bet."
 },
 {
 "id": "mental-models",
